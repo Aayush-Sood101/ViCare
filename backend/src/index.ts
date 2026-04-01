@@ -2,6 +2,11 @@ import express, { Request, Response } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { testDatabaseConnection } from './config/database';
+import { errorHandler } from './middleware/errorHandler';
+
+// Routes
+import webhookRoutes from './routes/webhooks';
+import authRoutes from './routes/auth';
 
 // Load environment variables
 dotenv.config();
@@ -17,7 +22,10 @@ app.use(cors({
   credentials: true,
 }));
 
-// JSON parsing
+// Webhook routes BEFORE JSON parser (needs raw body for signature verification)
+app.use('/api/webhooks', express.json({ verify: (req: any, res, buf) => { req.rawBody = buf; } }), webhookRoutes);
+
+// JSON parsing for all other routes
 app.use(express.json());
 
 // Request logging middleware
@@ -28,13 +36,14 @@ app.use((req, res, next) => {
 
 // ==================== ROUTES ====================
 
-// Health check endpoint
+// Health check endpoint (public)
 app.get('/health', (req: Request, res: Response) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
+    phase: 2,
   });
 });
 
@@ -43,10 +52,18 @@ app.get('/api', (req: Request, res: Response) => {
   res.json({
     name: 'ViCare API',
     version: '1.0.0',
+    phase: 2,
     description: 'University Campus Healthcare Platform Backend',
-    documentation: '/api/docs',
+    endpoints: {
+      health: '/health',
+      auth: '/api/auth/*',
+      webhooks: '/api/webhooks/clerk',
+    },
   });
 });
+
+// Auth routes
+app.use('/api/auth', authRoutes);
 
 // Catch-all for undefined routes
 app.use('*', (req: Request, res: Response) => {
@@ -59,14 +76,7 @@ app.use('*', (req: Request, res: Response) => {
 
 // ==================== ERROR HANDLING ====================
 
-app.use((err: any, req: Request, res: Response, next: any) => {
-  console.error('Error:', err);
-  
-  res.status(err.statusCode || 500).json({
-    error: err.message || 'Internal server error',
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack }),
-  });
-});
+app.use(errorHandler);
 
 // ==================== SERVER STARTUP ====================
 
