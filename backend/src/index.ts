@@ -7,6 +7,12 @@ import { errorHandler } from './middleware/errorHandler';
 // Routes
 import webhookRoutes from './routes/webhooks';
 import authRoutes from './routes/auth';
+import patientRoutes from './routes/patients';
+import doctorRoutes from './routes/doctors';
+import appointmentRoutes from './routes/appointments';
+import consultationRoutes from './routes/consultations';
+import prescriptionRoutes from './routes/prescriptions';
+import certificateRoutes from './routes/certificates';
 
 // Load environment variables
 dotenv.config();
@@ -43,7 +49,7 @@ app.get('/health', (req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
-    phase: 2,
+    phase: 3,
   });
 });
 
@@ -52,18 +58,32 @@ app.get('/api', (req: Request, res: Response) => {
   res.json({
     name: 'ViCare API',
     version: '1.0.0',
-    phase: 2,
+    phase: 3,
     description: 'University Campus Healthcare Platform Backend',
     endpoints: {
       health: '/health',
       auth: '/api/auth/*',
       webhooks: '/api/webhooks/clerk',
+      patients: '/api/patients/*',
+      doctors: '/api/doctors/*',
+      appointments: '/api/appointments/*',
+      consultations: '/api/consultations/*',
+      prescriptions: '/api/prescriptions/*',
+      certificates: '/api/certificates/*',
     },
   });
 });
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Phase 3: Patient & Doctor Routes
+app.use('/api/patients', patientRoutes);
+app.use('/api/doctors', doctorRoutes);
+app.use('/api/appointments', appointmentRoutes);
+app.use('/api/consultations', consultationRoutes);
+app.use('/api/prescriptions', prescriptionRoutes);
+app.use('/api/certificates', certificateRoutes);
 
 // Catch-all for undefined routes
 app.use('*', (req: Request, res: Response) => {
@@ -103,13 +123,17 @@ async function startServer() {
       console.log(`  Health Check:  http://localhost:${PORT}/health`);
       console.log('═══════════════════════════════════════════════════════');
       console.log('');
-      console.log('Phase 1 Setup Complete! ✓');
+      console.log('Phase 3 Complete! ✓');
+      console.log('Patient & Doctor APIs Operational');
       console.log('');
-      console.log('Next Steps:');
-      console.log('1. Run the database/init.sql file in Supabase SQL Editor');
-      console.log('2. Create a "documents" storage bucket in Supabase (private)');
-      console.log('3. Configure Clerk JWT template and webhook');
-      console.log('4. Proceed to Phase 2 implementation');
+      console.log('Available Endpoints:');
+      console.log('- GET/PUT  /api/patients/me');
+      console.log('- GET      /api/patients/:id/history');
+      console.log('- GET      /api/doctors');
+      console.log('- POST/GET /api/appointments');
+      console.log('- POST/GET /api/consultations');
+      console.log('- POST/GET /api/prescriptions');
+      console.log('- POST/GET /api/certificates');
       console.log('');
     });
   } catch (error) {
