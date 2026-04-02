@@ -1,11 +1,14 @@
+// Load environment variables FIRST (before any other imports)
+import dotenv from 'dotenv';
+dotenv.config();
+
+// Now import everything else
 import express, { Request, Response } from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 import { testDatabaseConnection } from './config/database';
 import { errorHandler } from './middleware/errorHandler';
 
 // Routes
-import webhookRoutes from './routes/webhooks';
 import authRoutes from './routes/auth';
 import patientRoutes from './routes/patients';
 import doctorRoutes from './routes/doctors';
@@ -13,9 +16,9 @@ import appointmentRoutes from './routes/appointments';
 import consultationRoutes from './routes/consultations';
 import prescriptionRoutes from './routes/prescriptions';
 import certificateRoutes from './routes/certificates';
-
-// Load environment variables
-dotenv.config();
+import adminRoutes from './routes/admin';
+import systemRoutes from './routes/system';
+import docsRoutes from './routes/docs';
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -28,10 +31,7 @@ app.use(cors({
   credentials: true,
 }));
 
-// Webhook routes BEFORE JSON parser (needs raw body for signature verification)
-app.use('/api/webhooks', express.json({ verify: (req: any, res, buf) => { req.rawBody = buf; } }), webhookRoutes);
-
-// JSON parsing for all other routes
+// JSON parsing for all routes
 app.use(express.json());
 
 // Request logging middleware
@@ -49,7 +49,7 @@ app.get('/health', (req: Request, res: Response) => {
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || 'development',
     version: '1.0.0',
-    phase: 3,
+    phase: 4,
   });
 });
 
@@ -58,18 +58,20 @@ app.get('/api', (req: Request, res: Response) => {
   res.json({
     name: 'ViCare API',
     version: '1.0.0',
-    phase: 3,
+    phase: 4,
     description: 'University Campus Healthcare Platform Backend',
     endpoints: {
       health: '/health',
       auth: '/api/auth/*',
-      webhooks: '/api/webhooks/clerk',
       patients: '/api/patients/*',
       doctors: '/api/doctors/*',
       appointments: '/api/appointments/*',
       consultations: '/api/consultations/*',
       prescriptions: '/api/prescriptions/*',
       certificates: '/api/certificates/*',
+      admin: '/api/admin/*',
+      system: '/api/system/*',
+      docs: '/api/docs',
     },
   });
 });
@@ -84,6 +86,11 @@ app.use('/api/appointments', appointmentRoutes);
 app.use('/api/consultations', consultationRoutes);
 app.use('/api/prescriptions', prescriptionRoutes);
 app.use('/api/certificates', certificateRoutes);
+
+// Phase 4: Admin & System Routes
+app.use('/api/admin', adminRoutes);
+app.use('/api/system', systemRoutes);
+app.use('/api/docs', docsRoutes);
 
 // Catch-all for undefined routes
 app.use('*', (req: Request, res: Response) => {
@@ -123,17 +130,18 @@ async function startServer() {
       console.log(`  Health Check:  http://localhost:${PORT}/health`);
       console.log('═══════════════════════════════════════════════════════');
       console.log('');
-      console.log('Phase 3 Complete! ✓');
-      console.log('Patient & Doctor APIs Operational');
+      console.log('Phase 4 Complete! ✓');
+      console.log('All Backend Features Operational');
       console.log('');
-      console.log('Available Endpoints:');
-      console.log('- GET/PUT  /api/patients/me');
-      console.log('- GET      /api/patients/:id/history');
-      console.log('- GET      /api/doctors');
-      console.log('- POST/GET /api/appointments');
-      console.log('- POST/GET /api/consultations');
-      console.log('- POST/GET /api/prescriptions');
-      console.log('- POST/GET /api/certificates');
+      console.log('Core Features:');
+      console.log('- Patient & Doctor Management');
+      console.log('- Appointment Queue System');
+      console.log('- Consultations & Medical Records');
+      console.log('- PDF Prescriptions & Certificates');
+      console.log('- Admin Dashboard & Analytics');
+      console.log('- Doctor Approval Workflow');
+      console.log('');
+      console.log('Documentation: http://localhost:' + PORT + '/api/docs');
       console.log('');
     });
   } catch (error) {

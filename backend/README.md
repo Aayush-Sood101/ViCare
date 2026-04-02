@@ -27,7 +27,6 @@ NODE_ENV=development
 # Clerk (get from clerk.com dashboard)
 CLERK_SECRET_KEY=sk_test_...
 CLERK_PUBLISHABLE_KEY=pk_test_...
-CLERK_WEBHOOK_SECRET=whsec_...
 
 # Supabase (get from supabase.com project settings)
 SUPABASE_URL=https://xxxxx.supabase.co
@@ -87,9 +86,11 @@ This will create:
 }
 ```
 
-### 4. Configure Webhook (Phase 2)
-- Will be configured in Phase 2
-- Endpoint will be: `https://your-backend-url/api/webhooks/clerk`
+### 4. User Registration Flow
+- Users sign up via Clerk in the frontend
+- Frontend calls `/api/auth/complete-signup` to create database records
+- No webhooks required (frontend-driven registration)
+- See `docs/FRONTEND_REGISTRATION.md` for complete guide
 
 ## Running the Server
 

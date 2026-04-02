@@ -3,6 +3,8 @@ import { supabase } from '../config/database';
 import { clerkAuthMiddleware, requireRole } from '../middleware/auth';
 import { asyncHandler } from '../middleware/errorHandler';
 import { validateBody } from '../utils/validation';
+import { generateCertificatePDF } from '../services/pdfService';
+import { uploadPDF, getSignedPDFUrl } from '../services/storageService';
 
 const router = Router();
 router.use(clerkAuthMiddleware);
@@ -49,7 +51,22 @@ router.post('/', requireRole('doctor'), validateBody({
     return res.status(404).json({ error: 'Patient not found' });
   }
 
-  // Create certificate record (PDF URL will be added in Phase 4)
+  // Generate PDF
+  const pdfBuffer = await generateCertificatePDF({
+    patient,
+    doctor,
+    reason,
+    fromDate,
+    toDate,
+    notes,
+    issuedAt: new Date(),
+  });
+
+  // Upload to Supabase Storage
+  const fileName = `certificate-${patient.id}-${Date.now()}`;
+  const pdfPath = await uploadPDF(pdfBuffer, 'certificates', fileName);
+
+  // Create certificate record
   const { data, error } = await supabase
     .from('medical_certificates')
     .insert({
@@ -60,7 +77,7 @@ router.post('/', requireRole('doctor'), validateBody({
       from_date,
       to_date,
       notes,
-      pdf_url: null, // Will be generated in Phase 4
+      pdf_url: pdfPath,
     })
     .select()
     .single();
@@ -189,19 +206,23 @@ router.get('/:id/pdf', asyncHandler(async (req: Request, res: Response) => {
     }
   }
 
-  // For Phase 3, PDF generation is not yet implemented
   if (!certificate.pdf_url) {
     return res.status(404).json({ 
-      error: 'PDF not available',
-      message: 'PDF generation will be implemented in Phase 4'
+      error: 'PDF not available'
     });
   }
 
-  // Generate signed URL (will be implemented in Phase 4)
-  return res.json({ 
-    message: 'PDF generation coming in Phase 4',
-    pdf_url: certificate.pdf_url 
-  });
+  // Generate signed URL (expires in 1 hour)
+  try {
+    const signedUrl = await getSignedPDFUrl(certificate.pdf_url);
+    return res.json({ 
+      pdf_url: signedUrl,
+      expires_in: 3600 // 1 hour in seconds
+    });
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    return res.status(500).json({ error: 'Failed to generate PDF URL' });
+  }
 }));
 
 export default router;

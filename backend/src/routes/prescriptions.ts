@@ -3,6 +3,8 @@ import { supabase } from '../config/database';
 import { clerkAuthMiddleware, requireRole } from '../middleware/auth';
 import { asyncHandler } from '../middleware/errorHandler';
 import { validateBody } from '../utils/validation';
+import { generatePrescriptionPDF } from '../services/pdfService';
+import { uploadPDF, getSignedPDFUrl } from '../services/storageService';
 
 const router = Router();
 router.use(clerkAuthMiddleware);
@@ -45,7 +47,20 @@ router.post('/', requireRole('doctor'), validateBody({
     return res.status(404).json({ error: 'Patient not found' });
   }
 
-  // Create prescription record (PDF URL will be added in Phase 4)
+  // Generate PDF
+  const pdfBuffer = await generatePrescriptionPDF({
+    patient,
+    doctor,
+    medicines,
+    instructions,
+    issuedAt: new Date(),
+  });
+
+  // Upload to Supabase Storage
+  const fileName = `prescription-${patient.id}-${Date.now()}`;
+  const pdfPath = await uploadPDF(pdfBuffer, 'prescriptions', fileName);
+
+  // Create prescription record
   const { data, error } = await supabase
     .from('prescriptions')
     .insert({
@@ -54,7 +69,7 @@ router.post('/', requireRole('doctor'), validateBody({
       doctor_id: doctor.id,
       medicines,
       instructions,
-      pdf_url: null, // Will be generated in Phase 4
+      pdf_url: pdfPath,
     })
     .select()
     .single();
@@ -187,19 +202,23 @@ router.get('/:id/pdf', asyncHandler(async (req: Request, res: Response) => {
     }
   }
 
-  // For Phase 3, PDF generation is not yet implemented
   if (!prescription.pdf_url) {
     return res.status(404).json({ 
-      error: 'PDF not available',
-      message: 'PDF generation will be implemented in Phase 4'
+      error: 'PDF not available'
     });
   }
 
-  // Generate signed URL (will be implemented in Phase 4)
-  return res.json({ 
-    message: 'PDF generation coming in Phase 4',
-    pdf_url: prescription.pdf_url 
-  });
+  // Generate signed URL (expires in 1 hour)
+  try {
+    const signedUrl = await getSignedPDFUrl(prescription.pdf_url);
+    return res.json({ 
+      pdf_url: signedUrl,
+      expires_in: 3600 // 1 hour in seconds
+    });
+  } catch (error) {
+    console.error('Error generating signed URL:', error);
+    return res.status(500).json({ error: 'Failed to generate PDF URL' });
+  }
 }));
 
 export default router;
