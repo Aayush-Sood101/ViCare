@@ -8,6 +8,8 @@ import Link from 'next/link';
 import { Plus, X, Calendar } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import type { Appointment } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function AppointmentsPage() {
   const queryClient = useQueryClient();
@@ -51,26 +53,21 @@ export default function AppointmentsPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold">My Appointments</h1>
-        <Link
-          href="/patient/appointments/book"
-          className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-        >
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <h1 className={vc.h1}>My appointments</h1>
+        <Link href="/patient/appointments/book" className={cn(vc.btnPrimary, 'shrink-0')}>
           <Plus className="h-4 w-4" />
-          Book Appointment
+          Book appointment
         </Link>
       </div>
 
-      {/* Filter */}
-      <div className="flex gap-2 flex-wrap">
+      <div className="flex flex-wrap gap-2">
         {['all', 'pending', 'confirmed', 'completed', 'cancelled'].map((status) => (
           <button
             key={status}
+            type="button"
             onClick={() => setFilter(status)}
-            className={`px-4 py-2 rounded-lg capitalize transition ${
-              filter === status ? 'bg-blue-600 text-white' : 'bg-gray-100 hover:bg-gray-200'
-            }`}
+            className={cn(filter === status ? vc.filterActive : vc.filterIdle, 'capitalize')}
           >
             {status}
           </button>
@@ -78,45 +75,50 @@ export default function AppointmentsPage() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 text-gray-500">Loading...</div>
+        <div className={vc.loadingBox}>Loading...</div>
       ) : (
         <>
-          {/* Upcoming */}
           {upcomingAppointments.length > 0 && (
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b">
-                <h2 className="font-semibold">Upcoming Appointments</h2>
+            <div className={vc.tableWrap}>
+              <div className={vc.cardHeader}>
+                <h2 className={vc.h2}>Upcoming appointments</h2>
               </div>
-              <div className="divide-y">
+              <div className={vc.divideCard}>
                 {upcomingAppointments.map((apt: Appointment) => (
-                  <div key={apt.id} className="p-4 flex items-center justify-between">
+                  <div key={apt.id} className={cn(vc.listRow, 'flex-wrap')}>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-blue-600" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+                        <Calendar className="h-6 w-6" />
                       </div>
                       <div>
-                        <p className="font-medium">Dr. {apt.doctor?.full_name}</p>
-                        <p className="text-sm text-gray-600">
+                        <p className="font-medium text-slate-900">Dr. {apt.doctor?.full_name}</p>
+                        <p className="text-sm text-slate-600">
                           {apt.doctor?.specialization} • Token #{apt.token_number}
                         </p>
                         {appointmentReason(apt) && (
-                          <p className="text-sm text-gray-500 mt-1">{appointmentReason(apt)}</p>
+                          <p className="mt-1 text-sm text-slate-500">{appointmentReason(apt)}</p>
                         )}
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
                       <div className="text-right">
-                        <p className="font-medium">{formatDate(appointmentTime(apt))}</p>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
+                        <p className="font-medium text-slate-900">{formatDate(appointmentTime(apt))}</p>
+                        <span
+                          className={cn(
+                            'mt-1 inline-block rounded-full px-2 py-1 text-xs font-semibold',
+                            getStatusColor(apt.status)
+                          )}
+                        >
                           {apt.status}
                         </span>
                       </div>
                       {(apt.status === 'pending' || apt.status === 'confirmed') && (
                         <button
+                          type="button"
                           onClick={() => cancelAppointment.mutate(apt.id)}
                           disabled={cancelAppointment.isPending}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                          title="Cancel Appointment"
+                          className={vc.btnDangerSoft}
+                          title="Cancel appointment"
                         >
                           <X className="h-5 w-5" />
                         </button>
@@ -128,27 +130,31 @@ export default function AppointmentsPage() {
             </div>
           )}
 
-          {/* Past */}
           {pastAppointments.length > 0 && (
-            <div className="bg-white rounded-lg shadow">
-              <div className="p-4 border-b">
-                <h2 className="font-semibold text-gray-600">Past Appointments</h2>
+            <div className={vc.tableWrap}>
+              <div className={vc.cardHeader}>
+                <h2 className={cn(vc.h2, 'text-slate-600')}>Past appointments</h2>
               </div>
-              <div className="divide-y">
+              <div className={vc.divideCard}>
                 {pastAppointments.map((apt: Appointment) => (
-                  <div key={apt.id} className="p-4 flex items-center justify-between opacity-75">
+                  <div key={apt.id} className={cn(vc.listRow, 'opacity-80')}>
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
-                        <Calendar className="h-6 w-6 text-gray-400" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                        <Calendar className="h-6 w-6" />
                       </div>
                       <div>
-                        <p className="font-medium">Dr. {apt.doctor?.full_name}</p>
-                        <p className="text-sm text-gray-600">{apt.doctor?.specialization}</p>
+                        <p className="font-medium text-slate-900">Dr. {apt.doctor?.full_name}</p>
+                        <p className="text-sm text-slate-600">{apt.doctor?.specialization}</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">{formatDate(appointmentTime(apt))}</p>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
+                      <p className="font-medium text-slate-900">{formatDate(appointmentTime(apt))}</p>
+                      <span
+                        className={cn(
+                          'mt-1 inline-block rounded-full px-2 py-1 text-xs font-semibold',
+                          getStatusColor(apt.status)
+                        )}
+                      >
                         {apt.status}
                       </span>
                     </div>
@@ -159,16 +165,13 @@ export default function AppointmentsPage() {
           )}
 
           {appointments?.length === 0 && (
-            <div className="bg-white rounded-lg shadow p-12 text-center">
-              <Calendar className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
-              <p className="text-gray-500 mb-4">Book your first appointment to get started</p>
-              <Link
-                href="/patient/appointments/book"
-                className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
-              >
+            <div className={vc.emptyCard}>
+              <Calendar className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+              <h3 className="font-vicare-display text-lg font-semibold text-slate-900">No appointments found</h3>
+              <p className="mb-4 text-slate-500">Book your first appointment to get started</p>
+              <Link href="/patient/appointments/book" className={vc.btnPrimary}>
                 <Plus className="h-4 w-4" />
-                Book Appointment
+                Book appointment
               </Link>
             </div>
           )}

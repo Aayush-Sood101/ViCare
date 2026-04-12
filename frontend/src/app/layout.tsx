@@ -4,6 +4,7 @@ import { ClerkProvider } from '@clerk/nextjs';
 import { Toaster } from '@/components/ui/toaster';
 import QueryProvider from '@/components/providers/QueryProvider';
 import AuthTokenProvider from '@/components/providers/AuthTokenProvider';
+import { vicareDisplay } from '@/lib/fonts';
 import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -22,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${vicareDisplay.variable}`}>
         {!publishableKey && (
           <div
             role="alert"

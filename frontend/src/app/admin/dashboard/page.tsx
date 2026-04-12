@@ -4,7 +4,10 @@ import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '@/lib/api';
 import Link from 'next/link';
-import { Users, UserCheck, Stethoscope, Calendar, TrendingUp, Activity } from 'lucide-react';
+import { Users, UserCheck, Activity, Calendar, TrendingUp } from 'lucide-react';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
+
 export default function AdminDashboard() {
   const { data: overview, isLoading } = useQuery({
     queryKey: ['admin-overview'],
@@ -25,149 +28,124 @@ export default function AdminDashboard() {
   }, [overview?.weeklyAppointments]);
 
   if (isLoading) {
-    return <div className="text-center py-12 text-gray-500">Loading...</div>;
+    return <div className={vc.loadingBox}>Loading...</div>;
   }
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="text-gray-600">Welcome to the ViCare admin portal</p>
+        <h1 className={vc.h1}>Admin dashboard</h1>
+        <p className={cn(vc.muted, 'mt-1 text-sm')}>Welcome to the ViCare admin portal</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className={vc.iconTile}>
+              <Users className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.patients || 0}</p>
-              <p className="text-sm text-gray-600">Total Patients</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.patients || 0}</p>
+              <p className="text-sm text-slate-600">Total patients</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-100 rounded-full">
-              <Stethoscope className="h-6 w-6 text-green-600" />
+            <div className={vc.iconTile}>
+              <Activity className="h-5 w-5" strokeWidth={2.25} />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.activeDoctors || 0}</p>
-              <p className="text-sm text-gray-600">Active Doctors</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.activeDoctors || 0}</p>
+              <p className="text-sm text-slate-600">Active doctors</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <UserCheck className="h-6 w-6 text-yellow-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-800 ring-1 ring-amber-200/80">
+              <UserCheck className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.pendingApprovals || 0}</p>
-              <p className="text-sm text-gray-600">Pending Approvals</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.pendingApprovals || 0}</p>
+              <p className="text-sm text-slate-600">Pending approvals</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <Calendar className="h-6 w-6 text-purple-600" />
+            <div className={vc.iconTile}>
+              <Calendar className="h-5 w-5" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.today?.appointments || 0}</p>
-              <p className="text-sm text-gray-600">Today&apos;s Appointments</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.today?.appointments || 0}</p>
+              <p className="text-sm text-slate-600">Today&apos;s appointments</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link
-          href="/admin/approvals"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
-        >
-          <UserCheck className="h-8 w-8 text-yellow-600 mb-3" />
-          <h3 className="font-semibold">Doctor Approvals</h3>
-          <p className="text-sm text-gray-600">
-            {overview?.totals?.pendingApprovals || 0} pending
-          </p>
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Link href="/admin/approvals" className={vc.quickLink}>
+          <UserCheck className="mb-3 h-8 w-8 text-teal-700" />
+          <h3 className="font-vicare-display font-semibold text-slate-900">Doctor approvals</h3>
+          <p className="text-sm text-slate-600">{overview?.totals?.pendingApprovals || 0} pending</p>
         </Link>
 
-        <Link
-          href="/admin/doctors"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
-        >
-          <Stethoscope className="h-8 w-8 text-green-600 mb-3" />
-          <h3 className="font-semibold">Manage Doctors</h3>
-          <p className="text-sm text-gray-600">View and manage doctors</p>
+        <Link href="/admin/doctors" className={vc.quickLink}>
+          <Activity className="mb-3 h-8 w-8 text-teal-700" strokeWidth={2.25} />
+          <h3 className="font-vicare-display font-semibold text-slate-900">Manage doctors</h3>
+          <p className="text-sm text-slate-600">View and manage doctors</p>
         </Link>
 
-        <Link
-          href="/admin/patients"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
-        >
-          <Users className="h-8 w-8 text-blue-600 mb-3" />
-          <h3 className="font-semibold">View Patients</h3>
-          <p className="text-sm text-gray-600">Search patient records</p>
+        <Link href="/admin/patients" className={vc.quickLink}>
+          <Users className="mb-3 h-8 w-8 text-teal-700" />
+          <h3 className="font-vicare-display font-semibold text-slate-900">View patients</h3>
+          <p className="text-sm text-slate-600">Search patient records</p>
         </Link>
 
-        <Link
-          href="/admin/analytics"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
-        >
-          <TrendingUp className="h-8 w-8 text-purple-600 mb-3" />
-          <h3 className="font-semibold">Analytics</h3>
-          <p className="text-sm text-gray-600">View insights and reports</p>
+        <Link href="/admin/analytics" className={vc.quickLink}>
+          <TrendingUp className="mb-3 h-8 w-8 text-teal-700" />
+          <h3 className="font-vicare-display font-semibold text-slate-900">Analytics</h3>
+          <p className="text-sm text-slate-600">View insights and reports</p>
         </Link>
       </div>
 
-      {/* Today's Activity */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="font-semibold mb-4 flex items-center gap-2">
-          <Activity className="h-5 w-5 text-purple-600" />
-          Today&apos;s Activity
+      <div className={cn(vc.card, vc.cardPad)}>
+        <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+          <Activity className="h-5 w-5 text-teal-700" strokeWidth={2.25} />
+          Today&apos;s activity
         </h2>
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="p-4 bg-blue-50 rounded-lg">
-            <p className="text-3xl font-bold text-blue-600">
-              {overview?.today?.appointments || 0}
-            </p>
-            <p className="text-blue-800">Appointments Scheduled</p>
+        <div className="grid gap-6 md:grid-cols-2">
+          <div className={cn(vc.subtleHighlight, 'rounded-2xl p-4')}>
+            <p className="text-3xl font-bold text-teal-800">{overview?.today?.appointments || 0}</p>
+            <p className="text-teal-900">Appointments scheduled</p>
           </div>
-          <div className="p-4 bg-green-50 rounded-lg">
-            <p className="text-3xl font-bold text-green-600">
-              {overview?.today?.consultations || 0}
-            </p>
-            <p className="text-green-800">Consultations Completed</p>
+          <div className="rounded-2xl border border-emerald-100 bg-emerald-50/80 p-4 ring-1 ring-emerald-100">
+            <p className="text-3xl font-bold text-emerald-800">{overview?.today?.consultations || 0}</p>
+            <p className="text-emerald-900">Consultations completed</p>
           </div>
         </div>
       </div>
 
-      {/* Weekly Trend */}
       {weeklyChart.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4">Weekly Appointment Trend</h2>
-          <div className="flex items-end gap-2 h-40">
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4')}>Weekly appointment trend</h2>
+          <div className="flex h-40 items-end gap-2">
             {weeklyChart.map((day: { date: string; count: number }, index: number) => {
               const maxCount = Math.max(...weeklyChart.map((d: { count: number }) => d.count), 1);
               const height = (day.count / maxCount) * 100;
               return (
-                <div
-                  key={index}
-                  className="flex-1 flex flex-col items-center gap-1"
-                >
-                  <span className="text-xs text-gray-600">{day.count}</span>
+                <div key={index} className="flex flex-1 flex-col items-center gap-1">
+                  <span className="text-xs text-slate-600">{day.count}</span>
                   <div
-                    className="w-full bg-blue-500 rounded-t"
+                    className={cn(vc.barChart, 'w-full rounded-t')}
                     style={{ height: `${height}%`, minHeight: '4px' }}
                   />
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-slate-500">
                     {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
                   </span>
                 </div>

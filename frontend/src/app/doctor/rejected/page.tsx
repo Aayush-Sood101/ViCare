@@ -3,36 +3,39 @@
 import { useAuth } from '@/hooks/useAuth';
 import { XCircle } from 'lucide-react';
 import { SignOutButton } from '@clerk/nextjs';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function DoctorRejectedPage() {
   const { user, status } = useAuth();
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-xl shadow-lg p-8 text-center">
-        <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <XCircle className="h-8 w-8 text-red-600" />
+    <div className={`flex min-h-screen items-center justify-center p-4 ${vc.pageCanvas}`}>
+      <div className={cn(vc.card, 'w-full max-w-md p-8 text-center shadow-lg')}>
+        <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-red-100 text-red-600">
+          <XCircle className="h-8 w-8" />
         </div>
 
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Application Rejected</h1>
-        <p className="text-gray-600 mb-6">
+        <h1 className="font-vicare-display mb-2 text-2xl font-semibold text-slate-900">Application rejected</h1>
+        <p className="mb-6 text-slate-600">
           We&apos;re sorry, Dr. {user?.firstName || 'Doctor'}, but your application was not approved.
         </p>
 
         {status?.rejectionReason && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-left mb-6">
-            <h3 className="font-medium text-red-800 mb-2">Reason:</h3>
-            <p className="text-sm text-red-700">{status.rejectionReason}</p>
+          <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 p-4 text-left">
+            <h3 className="mb-2 font-semibold text-red-900">Reason</h3>
+            <p className="text-sm text-red-800">{status.rejectionReason}</p>
           </div>
         )}
 
-        <p className="text-sm text-gray-600 mb-6">
-          If you believe this was a mistake or have additional documentation to provide, please contact the administrator.
+        <p className="mb-6 text-sm text-slate-600">
+          If you believe this was a mistake or have additional documentation to provide, please contact the
+          administrator.
         </p>
 
         <SignOutButton>
-          <button className="w-full bg-gray-900 text-white py-3 rounded-lg hover:bg-gray-800 transition font-semibold">
-            Sign Out
+          <button type="button" className={cn(vc.btnPrimary, vc.btnPrimaryBlock, 'bg-slate-900 ring-slate-700 hover:bg-slate-800')}>
+            Sign out
           </button>
         </SignOutButton>
       </div>

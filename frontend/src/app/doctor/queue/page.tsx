@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentsApi, doctorsApi } from '@/lib/api';
-import { formatDate, getStatusColor, appointmentReason } from '@/lib/utils';
+import { getStatusColor, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
-import { Play, Check, X, User, Clock } from 'lucide-react';
+import { Play, X, User } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
-import type { Appointment, DoctorStats } from '@/types';
+import type { Appointment } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function DoctorQueue() {
   const queryClient = useQueryClient();
@@ -51,73 +53,77 @@ export default function DoctorQueue() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <h1 className="text-2xl font-bold">Patient Queue</h1>
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+        <h1 className={vc.h1}>Patient queue</h1>
         <input
           type="date"
           value={selectedDate}
           onChange={(e) => setSelectedDate(e.target.value)}
-          className="border rounded-lg px-3 py-2"
+          className={cn(vc.input, 'w-full sm:w-auto sm:min-w-[12rem]')}
         />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-4 rounded-lg shadow">
-          <p className="text-gray-600 text-sm">Total Today</p>
-          <p className="text-2xl font-bold">{stats?.today?.total || 0}</p>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className={vc.statCard}>
+          <p className="text-sm text-slate-600">Total today</p>
+          <p className="text-2xl font-bold text-slate-900">{stats?.today?.total || 0}</p>
         </div>
-        <div className="bg-yellow-50 p-4 rounded-lg shadow">
-          <p className="text-yellow-600 text-sm">Pending</p>
-          <p className="text-2xl font-bold text-yellow-700">{stats?.today?.pending || 0}</p>
+        <div className={cn(vc.statCard, 'bg-amber-50/50 ring-1 ring-amber-100')}>
+          <p className="text-sm text-amber-800">Pending</p>
+          <p className="text-2xl font-bold text-amber-900">{stats?.today?.pending || 0}</p>
         </div>
-        <div className="bg-blue-50 p-4 rounded-lg shadow">
-          <p className="text-blue-600 text-sm">In Progress</p>
-          <p className="text-2xl font-bold text-blue-700">{stats?.today?.in_progress || 0}</p>
+        <div className={cn(vc.statCard, vc.subtleHighlight)}>
+          <p className="text-sm text-teal-900">In progress</p>
+          <p className="text-2xl font-bold text-teal-950">{stats?.today?.in_progress || 0}</p>
         </div>
-        <div className="bg-green-50 p-4 rounded-lg shadow">
-          <p className="text-green-600 text-sm">Completed</p>
-          <p className="text-2xl font-bold text-green-700">{stats?.today?.completed || 0}</p>
+        <div className={cn(vc.statCard, 'bg-emerald-50/50 ring-1 ring-emerald-100')}>
+          <p className="text-sm text-emerald-800">Completed</p>
+          <p className="text-2xl font-bold text-emerald-900">{stats?.today?.completed || 0}</p>
         </div>
       </div>
 
-      {/* Queue */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b">
-          <h2 className="font-semibold">Appointments</h2>
+      <div className={vc.tableWrap}>
+        <div className={vc.cardHeader}>
+          <h2 className={vc.h2}>Appointments</h2>
         </div>
 
         {isLoading ? (
-          <div className="p-8 text-center text-gray-500">Loading...</div>
+          <div className="p-8 text-center text-slate-500">Loading...</div>
         ) : sortedAppointments.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">No appointments for this date</div>
+          <div className="p-8 text-center text-slate-500">No appointments for this date</div>
         ) : (
-          <div className="divide-y">
+          <div className={vc.divideCard}>
             {sortedAppointments.map((apt: Appointment) => (
               <div
                 key={apt.id}
-                className={`p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${
-                  apt.status === 'in_progress' ? 'bg-blue-50' : ''
-                }`}
+                className={cn(
+                  vc.listRow,
+                  'flex-col sm:flex-row',
+                  apt.status === 'in_progress' && vc.subtleHighlight
+                )}
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
-                    <User className="w-6 h-6 text-gray-500" />
+                  <div className={vc.iconAvatar}>
+                    <User className="h-6 w-6" />
                   </div>
                   <div>
-                    <p className="font-medium">{apt.patient?.full_name}</p>
-                    <p className="text-sm text-gray-600">
+                    <p className="font-medium text-slate-900">{apt.patient?.full_name}</p>
+                    <p className="text-sm text-slate-600">
                       Token #{apt.token_number} • {apt.patient?.student_id}
                     </p>
                     {appointmentReason(apt) && (
-                      <p className="text-sm text-gray-500">{appointmentReason(apt)}</p>
+                      <p className="text-sm text-slate-500">{appointmentReason(apt)}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-4 ml-16 sm:ml-0">
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
+                <div className="ml-14 flex flex-wrap items-center gap-3 sm:ml-0">
+                  <span
+                    className={cn(
+                      'rounded-full px-3 py-1 text-xs font-semibold',
+                      getStatusColor(apt.status)
+                    )}
+                  >
                     {apt.status.replace('_', ' ')}
                   </span>
 
@@ -125,29 +131,28 @@ export default function DoctorQueue() {
                     <div className="flex gap-2">
                       {apt.status !== 'in_progress' && (
                         <button
+                          type="button"
                           onClick={() => updateStatus.mutate({ id: apt.id, status: 'in_progress' })}
                           disabled={updateStatus.isPending}
-                          className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
-                          title="Start Consultation"
+                          className={vc.btnIconTeal}
+                          title="Start consultation"
                         >
-                          <Play className="w-4 h-4" />
+                          <Play className="h-4 w-4" />
                         </button>
                       )}
                       {apt.status === 'in_progress' && (
-                        <Link
-                          href={`/doctor/consultation/${apt.id}`}
-                          className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                        >
-                          Open Consultation
+                        <Link href={`/doctor/consultation/${apt.id}`} className={vc.btnSuccess}>
+                          Open consultation
                         </Link>
                       )}
                       <button
+                        type="button"
                         onClick={() => updateStatus.mutate({ id: apt.id, status: 'cancelled' })}
                         disabled={updateStatus.isPending}
-                        className="p-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 disabled:opacity-50"
+                        className={vc.btnDangerSoft}
                         title="Cancel"
                       >
-                        <X className="w-4 h-4" />
+                        <X className="h-4 w-4" />
                       </button>
                     </div>
                   )}

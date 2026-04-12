@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import AdminSidebar from '@/components/layouts/AdminSidebar';
 import { getAppRole } from '@/lib/clerk-session-role';
+import { vc } from '@/lib/vicare-ui';
 
 export default async function AdminLayout({
   children,
@@ -14,11 +15,9 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={vc.shell}>
       <AdminSidebar />
-      <main className="flex-1 overflow-auto p-8 lg:p-8 pt-20 lg:pt-8">
-        {children}
-      </main>
+      <main className={vc.main}>{children}</main>
     </div>
   );
 }

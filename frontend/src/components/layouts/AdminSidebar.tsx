@@ -9,12 +9,13 @@ import {
   Users,
   UserPlus,
   BarChart3,
-  Shield,
+  Activity,
   Menu,
   X,
 } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { vc, vcNavItem } from '@/lib/vicare-ui';
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -30,33 +31,32 @@ export default function AdminSidebar() {
 
   return (
     <>
-      {/* Mobile menu button */}
       <button
-        className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-white rounded-lg shadow-md"
+        type="button"
+        className={vc.mobileMenuBtn}
         onClick={() => setIsMobileOpen(!isMobileOpen)}
+        aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
       >
-        {isMobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+        {isMobileOpen ? <X className="h-6 w-6 text-slate-700" /> : <Menu className="h-6 w-6 text-slate-700" />}
       </button>
 
-      {/* Sidebar */}
       <aside
-        className={cn(
-          'fixed lg:static inset-y-0 left-0 z-40 w-64 bg-white border-r transform transition-transform duration-200 ease-in-out',
-          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
-        )}
+        className={cn(vc.sidebarAside, isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')}
       >
-        <div className="flex flex-col h-full">
-          {/* Logo */}
-          <div className="p-6 border-b">
-            <Link href="/admin/dashboard" className="flex items-center gap-2">
-              <Shield className="h-8 w-8 text-purple-600" />
-              <span className="text-xl font-bold text-gray-900">ViCare</span>
+        <div className="flex h-full flex-col">
+          <div className={vc.sidebarBrand}>
+            <Link href="/admin/dashboard" className="flex items-center gap-2.5">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-800 text-white shadow-sm ring-1 ring-slate-900/30">
+                <Activity className="h-[18px] w-[18px]" strokeWidth={2.25} />
+              </span>
+              <div className="leading-tight">
+                <span className="block text-[15px] font-semibold tracking-tight text-slate-900">ViCare</span>
+                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-500">Admin</span>
+              </div>
             </Link>
-            <p className="text-xs text-gray-500 mt-1">Admin Portal</p>
           </div>
 
-          {/* Navigation */}
-          <nav className="flex-1 p-4 space-y-1">
+          <nav className="flex-1 space-y-1 p-4">
             {navItems.map((item) => {
               const isActive = pathname === item.href;
               return (
@@ -64,37 +64,25 @@ export default function AdminSidebar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileOpen(false)}
-                  className={cn(
-                    'flex items-center gap-3 px-4 py-3 rounded-lg transition-colors',
-                    isActive
-                      ? 'bg-purple-50 text-purple-600'
-                      : 'text-gray-600 hover:bg-gray-50'
-                  )}
+                  className={vcNavItem(isActive)}
                 >
-                  <item.icon className="h-5 w-5" />
-                  <span className="font-medium">{item.label}</span>
+                  <item.icon className="h-5 w-5 shrink-0" />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
           </nav>
 
-          {/* User */}
-          <div className="p-4 border-t">
+          <div className={vc.sidebarFooter}>
             <div className="flex items-center gap-3">
               <UserButton />
-              <span className="text-sm text-gray-600">Admin</span>
+              <span className="text-sm text-slate-600">Admin</span>
             </div>
           </div>
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
-      {isMobileOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-30 lg:hidden"
-          onClick={() => setIsMobileOpen(false)}
-        />
-      )}
+      {isMobileOpen && <div className={vc.overlay} onClick={() => setIsMobileOpen(false)} aria-hidden />}
     </>
   );
 }

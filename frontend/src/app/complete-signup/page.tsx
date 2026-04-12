@@ -7,8 +7,10 @@ import { useMutation } from '@tanstack/react-query';
 import { authApi, setAuthToken } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
 import { BLOOD_GROUPS, GENDERS, SPECIALIZATIONS } from '@/lib/constants';
-import { Heart, Stethoscope } from 'lucide-react';
+import { Activity, Stethoscope } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 const initialForm = {
   full_name: '',
@@ -109,7 +111,7 @@ export default function CompleteSignupPage() {
 
   if (!userLoaded || alreadyRegistered) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-600">
+      <div className={`flex min-h-screen items-center justify-center ${vc.pageCanvas} text-slate-600`}>
         {!userLoaded ? 'Loading…' : 'Redirecting…'}
       </div>
     );
@@ -117,30 +119,44 @@ export default function CompleteSignupPage() {
 
   if (!userType) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-        <div className="max-w-2xl w-full">
-          <h1 className="text-3xl font-bold text-center mb-2">Complete Your Registration</h1>
-          <p className="text-gray-600 text-center mb-8">Choose how you want to use ViCare</p>
+      <div className={`flex min-h-screen items-center justify-center p-4 ${vc.pageCanvas}`}>
+        <div className="w-full max-w-2xl">
+          <h1 className="font-vicare-display mb-2 text-center text-3xl font-semibold text-slate-900">
+            Complete your registration
+          </h1>
+          <p className="mb-8 text-center text-slate-600">Choose how you want to use ViCare</p>
 
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid gap-6 md:grid-cols-2">
             <button
+              type="button"
               onClick={() => setUserType('patient')}
-              className="bg-white p-8 rounded-xl shadow-sm border-2 border-transparent hover:border-blue-500 transition text-left"
+              className={cn(
+                vc.quickLink,
+                'text-left transition hover:border-teal-300'
+              )}
             >
-              <Heart className="h-12 w-12 text-blue-600 mb-4" />
-              <h2 className="text-xl font-semibold mb-2">I&apos;m a Student</h2>
-              <p className="text-gray-600">
+              <div className={cn(vc.iconTileLg, 'mb-4')}>
+                <Activity className="h-6 w-6" strokeWidth={2.25} />
+              </div>
+              <h2 className="font-vicare-display text-xl font-semibold text-slate-900">I&apos;m a student</h2>
+              <p className="mt-2 text-slate-600">
                 Register as a patient to book appointments, view prescriptions, and manage your health records.
               </p>
             </button>
 
             <button
+              type="button"
               onClick={() => setUserType('doctor')}
-              className="bg-white p-8 rounded-xl shadow-sm border-2 border-transparent hover:border-green-500 transition text-left"
+              className={cn(
+                vc.quickLink,
+                'text-left transition hover:border-teal-300'
+              )}
             >
-              <Stethoscope className="h-12 w-12 text-green-600 mb-4" />
-              <h2 className="text-xl font-semibold mb-2">I&apos;m a Doctor</h2>
-              <p className="text-gray-600">
+              <div className={cn(vc.iconTileLg, 'mb-4')}>
+                <Stethoscope className="h-6 w-6" />
+              </div>
+              <h2 className="font-vicare-display text-xl font-semibold text-slate-900">I&apos;m a doctor</h2>
+              <p className="mt-2 text-slate-600">
                 Register as a doctor to manage consultations, issue prescriptions, and serve patients.
               </p>
             </button>
@@ -151,80 +167,72 @@ export default function CompleteSignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4">
-      <div className="max-w-2xl mx-auto">
+    <div className={`min-h-screen py-12 ${vc.pageCanvas} px-4`}>
+      <div className="mx-auto max-w-2xl">
         <button
+          type="button"
           onClick={() => setUserType(null)}
-          className="text-gray-600 hover:text-gray-900 mb-4"
+          className={cn(vc.link, 'mb-4 inline-flex text-sm')}
         >
           ← Back
         </button>
 
-        <div className="bg-white rounded-xl shadow-sm p-8">
-          <h1 className="text-2xl font-bold mb-6">
-            {userType === 'patient' ? 'Student Registration' : 'Doctor Registration'}
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h1 className="font-vicare-display mb-6 text-2xl font-semibold text-slate-900">
+            {userType === 'patient' ? 'Student registration' : 'Doctor registration'}
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
-              <p className="rounded-lg border bg-gray-50 px-3 py-2 text-gray-900">
+              <label className={vc.label}>Full name</label>
+              <p className={cn(vc.readOnlyBox, 'mt-1')}>
                 {user?.fullName || formData.full_name || '—'}
               </p>
-              <p className="mt-1 text-xs text-gray-500">
+              <p className="mt-1 text-xs text-slate-500">
                 Taken from your account. Change it in your profile settings if needed.
               </p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Phone Number
-              </label>
+              <label className={vc.label}>Phone number</label>
               <input
                 type="tel"
                 value={formData.phone_number}
                 onChange={(e) => setFormData({ ...formData, phone_number: e.target.value })}
                 placeholder="+91-XXXXXXXXXX"
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                className={cn(vc.input, 'mt-1')}
               />
             </div>
 
             {userType === 'patient' ? (
               <>
-                {/* Patient-specific fields */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Student ID *
-                  </label>
+                  <label className={vc.label}>Student ID *</label>
                   <input
                     type="text"
                     required
                     value={formData.student_id}
                     onChange={(e) => setFormData({ ...formData, student_id: e.target.value })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.input, 'mt-1')}
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Date of Birth
-                    </label>
+                    <label className={vc.label}>Date of birth</label>
                     <input
                       type="date"
                       value={formData.date_of_birth}
                       onChange={(e) => setFormData({ ...formData, date_of_birth: e.target.value })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={cn(vc.input, 'mt-1')}
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Gender
-                    </label>
+                    <label className={vc.label}>Gender</label>
                     <select
                       value={formData.gender}
                       onChange={(e) => setFormData({ ...formData, gender: e.target.value })}
-                      className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      className={cn(vc.input, 'mt-1')}
                     >
                       <option value="">Select gender</option>
                       {GENDERS.map((g) => (
@@ -237,13 +245,11 @@ export default function CompleteSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Blood Group
-                  </label>
+                  <label className={vc.label}>Blood group</label>
                   <select
                     value={formData.blood_group}
                     onChange={(e) => setFormData({ ...formData, blood_group: e.target.value })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.input, 'mt-1')}
                   >
                     <option value="">Select blood group</option>
                     {BLOOD_GROUPS.map((bg) => (
@@ -255,50 +261,42 @@ export default function CompleteSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Address
-                  </label>
+                  <label className={vc.label}>Address</label>
                   <textarea
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                     rows={2}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.textarea, 'mt-1')}
                   />
                 </div>
 
-                <div className="border-t pt-4">
-                  <h3 className="font-medium mb-4">Emergency Contact</h3>
-                  <div className="grid md:grid-cols-3 gap-4">
+                <div className="border-t border-slate-200 pt-4">
+                  <h3 className="font-vicare-display mb-4 font-semibold text-slate-900">Emergency contact</h3>
+                  <div className="grid gap-4 md:grid-cols-3">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Name
-                      </label>
+                      <label className={vc.label}>Name</label>
                       <input
                         type="text"
                         value={formData.emergency_contact_name}
                         onChange={(e) =>
                           setFormData({ ...formData, emergency_contact_name: e.target.value })
                         }
-                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className={cn(vc.input, 'mt-1')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Phone
-                      </label>
+                      <label className={vc.label}>Phone</label>
                       <input
                         type="tel"
                         value={formData.emergency_contact_phone}
                         onChange={(e) =>
                           setFormData({ ...formData, emergency_contact_phone: e.target.value })
                         }
-                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className={cn(vc.input, 'mt-1')}
                       />
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Relation
-                      </label>
+                      <label className={vc.label}>Relation</label>
                       <input
                         type="text"
                         value={formData.emergency_contact_relation}
@@ -306,7 +304,7 @@ export default function CompleteSignupPage() {
                           setFormData({ ...formData, emergency_contact_relation: e.target.value })
                         }
                         placeholder="e.g., Parent, Sibling"
-                        className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                        className={cn(vc.input, 'mt-1')}
                       />
                     </div>
                   </div>
@@ -314,15 +312,12 @@ export default function CompleteSignupPage() {
               </>
             ) : (
               <>
-                {/* Doctor-specific fields */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Specialization
-                  </label>
+                  <label className={vc.label}>Specialization</label>
                   <select
                     value={formData.specialization}
                     onChange={(e) => setFormData({ ...formData, specialization: e.target.value })}
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.input, 'mt-1')}
                   >
                     <option value="">Select specialization</option>
                     {SPECIALIZATIONS.map((s) => (
@@ -334,22 +329,18 @@ export default function CompleteSignupPage() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Qualification
-                  </label>
+                  <label className={vc.label}>Qualification</label>
                   <input
                     type="text"
                     value={formData.qualification}
                     onChange={(e) => setFormData({ ...formData, qualification: e.target.value })}
                     placeholder="e.g., MBBS, MD"
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.input, 'mt-1')}
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Registration Number
-                  </label>
+                  <label className={vc.label}>Registration number</label>
                   <input
                     type="text"
                     value={formData.registration_number}
@@ -357,14 +348,14 @@ export default function CompleteSignupPage() {
                       setFormData({ ...formData, registration_number: e.target.value })
                     }
                     placeholder="Medical license/registration number"
-                    className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    className={cn(vc.input, 'mt-1')}
                   />
                 </div>
 
-                <div className="bg-yellow-50 p-4 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    <strong>Note:</strong> Your application will be reviewed by an administrator
-                    before you can access the doctor portal.
+                <div className={vc.calloutWarn}>
+                  <p className="text-sm">
+                    <strong>Note:</strong> Your application will be reviewed by an administrator before you can
+                    access the doctor portal.
                   </p>
                 </div>
               </>
@@ -373,13 +364,13 @@ export default function CompleteSignupPage() {
             <button
               type="submit"
               disabled={completeSignup.isPending}
-              className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+              className={cn(vc.btnPrimary, vc.btnPrimaryBlock)}
             >
               {completeSignup.isPending
                 ? 'Submitting...'
                 : userType === 'patient'
-                ? 'Complete Registration'
-                : 'Submit Application'}
+                  ? 'Complete registration'
+                  : 'Submit application'}
             </button>
           </form>
         </div>

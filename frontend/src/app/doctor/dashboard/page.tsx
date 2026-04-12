@@ -6,7 +6,9 @@ import { useAuth } from '@/hooks/useAuth';
 import { formatDate, appointmentTime, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
 import { Users, Clock, CheckCircle, Play, Calendar } from 'lucide-react';
-import type { Appointment, DoctorStats } from '@/types';
+import type { Appointment } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function DoctorDashboard() {
   const { user } = useAuth();
@@ -37,155 +39,117 @@ export default function DoctorDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Welcome */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">
+        <h1 className={vc.h1}>
           Welcome, Dr. {profile?.full_name || user?.firstName}
         </h1>
-        <p className="text-gray-600">
+        <p className={cn(vc.muted, 'mt-1 text-sm')}>
           {profile?.specialization || 'General Medicine'} • {formatDate(new Date())}
         </p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Users className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats?.today?.total || 0}</p>
-              <p className="text-sm text-gray-600">Total Today</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <Clock className="h-6 w-6 text-yellow-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats?.today?.pending || 0}</p>
-              <p className="text-sm text-gray-600">Pending</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Play className="h-6 w-6 text-blue-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats?.today?.in_progress || 0}</p>
-              <p className="text-sm text-gray-600">In Progress</p>
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {[
+          { label: 'Total today', value: stats?.today?.total || 0, icon: Users },
+          { label: 'Pending', value: stats?.today?.pending || 0, icon: Clock, muted: true },
+          { label: 'In progress', value: stats?.today?.in_progress || 0, icon: Play },
+          { label: 'Completed', value: stats?.today?.completed || 0, icon: CheckCircle },
+        ].map(({ label, value, icon: Icon, muted }) => (
+          <div key={label} className={vc.statCard}>
+            <div className="flex items-center gap-3">
+              <div
+                className={cn(
+                  muted ? 'bg-amber-100 text-amber-800' : '',
+                  !muted && 'bg-teal-700 text-white shadow-md shadow-teal-900/15 ring-2 ring-teal-600/25',
+                  'flex h-11 w-11 items-center justify-center rounded-xl'
+                )}
+              >
+                <Icon className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-slate-900">{value}</p>
+                <p className="text-sm text-slate-600">{label}</p>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow">
-          <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-100 rounded-full">
-              <CheckCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <div>
-              <p className="text-2xl font-bold">{stats?.today?.completed || 0}</p>
-              <p className="text-sm text-gray-600">Completed</p>
-            </div>
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* Current Patient */}
       {currentPatient && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-6">
-          <h2 className="font-semibold text-blue-800 mb-4 flex items-center gap-2">
+        <div className={cn(vc.subtleHighlight, 'rounded-2xl p-6')}>
+          <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2 text-teal-900')}>
             <Play className="h-5 w-5" />
-            Current Patient
+            Current patient
           </h2>
-          <div className="flex justify-between items-center">
+          <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
             <div>
-              <p className="text-xl font-semibold text-gray-900">
-                {currentPatient.patient?.full_name}
-              </p>
-              <p className="text-gray-600">
+              <p className="text-xl font-semibold text-slate-900">{currentPatient.patient?.full_name}</p>
+              <p className="text-slate-600">
                 Token #{currentPatient.token_number} • {currentPatient.patient?.student_id}
               </p>
               {appointmentReason(currentPatient) && (
-                <p className="text-sm text-gray-500 mt-1">{appointmentReason(currentPatient)}</p>
+                <p className="mt-1 text-sm text-slate-500">{appointmentReason(currentPatient)}</p>
               )}
             </div>
-            <Link
-              href={`/doctor/consultation/${currentPatient.id}`}
-              className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition font-semibold"
-            >
-              Continue Consultation
+            <Link href={`/doctor/consultation/${currentPatient.id}`} className={cn(vc.btnPrimary, 'shrink-0')}>
+              Continue consultation
             </Link>
           </div>
         </div>
       )}
 
-      {/* Quick Actions */}
-      <div className="grid md:grid-cols-2 gap-4">
-        <Link
-          href="/doctor/queue"
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition"
-        >
+      <div className="grid gap-4 md:grid-cols-2">
+        <Link href="/doctor/queue" className={vc.quickLink}>
           <div className="flex items-center gap-4">
-            <div className="p-4 bg-green-100 rounded-full">
-              <Users className="h-8 w-8 text-green-600" />
+            <div className={vc.iconTileLg}>
+              <Users className="h-7 w-7" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Patient Queue</h3>
-              <p className="text-gray-600">View and manage today&apos;s appointments</p>
+              <h3 className="font-vicare-display text-lg font-semibold text-slate-900">Patient queue</h3>
+              <p className="text-slate-600">View and manage today&apos;s appointments</p>
             </div>
           </div>
         </Link>
 
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={cn(vc.card, vc.cardPad)}>
           <div className="flex items-center gap-4">
-            <div className="p-4 bg-purple-100 rounded-full">
-              <Calendar className="h-8 w-8 text-purple-600" />
+            <div className={vc.iconTileLg}>
+              <Calendar className="h-7 w-7" />
             </div>
             <div>
-              <h3 className="font-semibold text-lg">Next in Queue</h3>
-              <p className="text-gray-600">
-                {nextInQueue?.length || 0} patients waiting
-              </p>
+              <h3 className="font-vicare-display text-lg font-semibold text-slate-900">Next in queue</h3>
+              <p className="text-slate-600">{nextInQueue?.length || 0} patients waiting</p>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Queue Preview */}
       {nextInQueue && nextInQueue.length > 0 && (
-        <div className="bg-white rounded-lg shadow">
-          <div className="p-4 border-b flex justify-between items-center">
-            <h2 className="font-semibold">Upcoming Patients</h2>
-            <Link
-              href="/doctor/queue"
-              className="text-blue-600 hover:underline text-sm"
-            >
-              View All →
+        <div className={vc.tableWrap}>
+          <div className={cn(vc.cardHeader, 'flex items-center justify-between')}>
+            <h2 className={vc.h2}>Upcoming patients</h2>
+            <Link href="/doctor/queue" className={cn(vc.link, 'text-sm')}>
+              View all →
             </Link>
           </div>
-          <div className="divide-y">
+          <div className={vc.divideCard}>
             {nextInQueue.slice(0, 5).map((apt: Appointment) => (
-              <div key={apt.id} className="p-4 flex items-center justify-between">
+              <div key={apt.id} className={vc.listRow}>
                 <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center font-semibold">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-800">
                     #{apt.token_number}
                   </div>
                   <div>
-                    <p className="font-medium">{apt.patient?.full_name}</p>
-                    <p className="text-sm text-gray-600">{apt.patient?.student_id}</p>
+                    <p className="font-medium text-slate-900">{apt.patient?.full_name}</p>
+                    <p className="text-sm text-slate-600">{apt.patient?.student_id}</p>
                   </div>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                  apt.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'
-                }`}>
+                <span
+                  className={cn(
+                    'rounded-full px-3 py-1 text-xs font-semibold',
+                    apt.status === 'confirmed' ? 'bg-emerald-100 text-emerald-900' : 'bg-amber-100 text-amber-900'
+                  )}
+                >
                   {apt.status}
                 </span>
               </div>

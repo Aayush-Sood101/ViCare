@@ -23,8 +23,10 @@ import {
   LineChart,
   Line,
 } from 'recharts';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
-const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16'];
+const COLORS = ['#0d9488', '#0f766e', '#14b8a6', '#5eead4', '#115e59', '#134e4a', '#99f6e4', '#ccfbf1'];
 
 export default function AdminAnalyticsPage() {
   const { data: overview } = useQuery({
@@ -59,61 +61,60 @@ export default function AdminAnalyticsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Analytics & Reports</h1>
+      <h1 className={vc.h1}>Analytics and reports</h1>
 
-      {/* Summary Cards */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white p-6 rounded-lg shadow">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-blue-100 rounded-full">
-              <Users className="h-6 w-6 text-blue-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-700 text-white shadow-md shadow-teal-900/15 ring-2 ring-teal-600/25">
+              <Users className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.patients || 0}</p>
-              <p className="text-sm text-gray-600">Total Patients</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.patients || 0}</p>
+              <p className="text-sm text-slate-600">Total patients</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-green-100 rounded-full">
-              <Activity className="h-6 w-6 text-green-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-100 text-emerald-800 ring-1 ring-emerald-200/80">
+              <Activity className="h-6 w-6" strokeWidth={2.25} />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.today?.consultations || 0}</p>
-              <p className="text-sm text-gray-600">Today&apos;s Consultations</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.today?.consultations || 0}</p>
+              <p className="text-sm text-slate-600">Today&apos;s consultations</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-purple-100 rounded-full">
-              <TrendingUp className="h-6 w-6 text-purple-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-slate-100 text-slate-800 ring-1 ring-slate-200">
+              <TrendingUp className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.activeDoctors || 0}</p>
-              <p className="text-sm text-gray-600">Active Doctors</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.activeDoctors || 0}</p>
+              <p className="text-sm text-slate-600">Active doctors</p>
             </div>
           </div>
         </div>
-        <div className="bg-white p-6 rounded-lg shadow">
+        <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="p-3 bg-yellow-100 rounded-full">
-              <Clock className="h-6 w-6 text-yellow-600" />
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-amber-100 text-amber-800 ring-1 ring-amber-200/80">
+              <Clock className="h-6 w-6" />
             </div>
             <div>
-              <p className="text-2xl font-bold">{overview?.totals?.pendingApprovals || 0}</p>
-              <p className="text-sm text-gray-600">Pending Approvals</p>
+              <p className="text-2xl font-bold text-slate-900">{overview?.totals?.pendingApprovals || 0}</p>
+              <p className="text-sm text-slate-600">Pending approvals</p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Visit Trends */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="font-semibold mb-4 flex items-center gap-2">
-          <TrendingUp className="h-5 w-5 text-blue-600" />
-          Visit Trends (Last 30 Days)
+      <div className={cn(vc.card, vc.cardPad)}>
+        <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+          <TrendingUp className="h-5 w-5 text-teal-700" />
+          Visit trends (last 30 days)
         </h2>
         <div className="h-80">
           {visits && visits.length > 0 ? (
@@ -136,23 +137,20 @@ export default function AdminAnalyticsPage() {
                     })
                   }
                 />
-                <Line type="monotone" dataKey="count" stroke="#3B82F6" strokeWidth={2} />
+                <Line type="monotone" dataKey="count" stroke="#0d9488" strokeWidth={2} />
               </LineChart>
             </ResponsiveContainer>
           ) : (
-            <div className="h-full flex items-center justify-center text-gray-500">
-              No data available
-            </div>
+            <div className="flex h-full items-center justify-center text-slate-500">No data available</div>
           )}
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        {/* Peak Hours */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Clock className="h-5 w-5 text-yellow-600" />
-            Peak Consultation Hours
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+            <Clock className="h-5 w-5 text-amber-600" />
+            Peak consultation hours
           </h2>
           <div className="h-64">
             {peakHours && peakHours.length > 0 ? (
@@ -162,11 +160,11 @@ export default function AdminAnalyticsPage() {
                   <XAxis dataKey="hour" tickFormatter={(value) => `${value}:00`} />
                   <YAxis />
                   <Tooltip labelFormatter={(value) => `${value}:00 - ${Number(value) + 1}:00`} />
-                  <Bar dataKey="count" fill="#F59E0B" />
+                  <Bar dataKey="count" fill="#0d9488" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
+              <div className="h-full flex items-center justify-center text-slate-500">
                 No data available
               </div>
             )}
@@ -174,10 +172,10 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Gender Distribution */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Users className="h-5 w-5 text-purple-600" />
-            Gender Distribution
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+            <Users className="h-5 w-5 text-teal-700" />
+            Gender distribution
           </h2>
           <div className="h-64">
             {demographics?.gender && demographics.gender.length > 0 ? (
@@ -202,7 +200,7 @@ export default function AdminAnalyticsPage() {
                 </PieChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
+              <div className="h-full flex items-center justify-center text-slate-500">
                 No data available
               </div>
             )}
@@ -210,10 +208,10 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Top Diagnoses */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Activity className="h-5 w-5 text-red-600" />
-            Top Diagnoses
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+            <Activity className="h-5 w-5 text-teal-700" strokeWidth={2.25} />
+            Top diagnoses
           </h2>
           <div className="h-64">
             {diagnoses && diagnoses.length > 0 ? (
@@ -223,11 +221,11 @@ export default function AdminAnalyticsPage() {
                   <XAxis type="number" />
                   <YAxis dataKey="diagnosis" type="category" width={120} tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#EF4444" />
+                  <Bar dataKey="count" fill="#0f766e" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
+              <div className="h-full flex items-center justify-center text-slate-500">
                 No data available
               </div>
             )}
@@ -235,10 +233,10 @@ export default function AdminAnalyticsPage() {
         </div>
 
         {/* Top Medicines */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4 flex items-center gap-2">
-            <Pill className="h-5 w-5 text-green-600" />
-            Most Prescribed Medicines
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
+            <Pill className="h-5 w-5 text-teal-700" />
+            Most prescribed medicines
           </h2>
           <div className="h-64">
             {medicines && medicines.length > 0 ? (
@@ -254,11 +252,11 @@ export default function AdminAnalyticsPage() {
                   <XAxis type="number" />
                   <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 12 }} />
                   <Tooltip />
-                  <Bar dataKey="count" fill="#10B981" />
+                  <Bar dataKey="count" fill="#14b8a6" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
-              <div className="h-full flex items-center justify-center text-gray-500">
+              <div className="h-full flex items-center justify-center text-slate-500">
                 No data available
               </div>
             )}
@@ -268,17 +266,18 @@ export default function AdminAnalyticsPage() {
 
       {/* Blood Group Distribution */}
       {demographics?.bloodGroup && demographics.bloodGroup.length > 0 && (
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="font-semibold mb-4">Blood Group Distribution</h2>
-          <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-            {demographics.bloodGroup.map(
-              (item: { bloodGroup: string; count: number }) => (
-                <div key={item.bloodGroup} className="text-center p-4 bg-red-50 rounded-lg">
-                  <p className="text-2xl font-bold text-red-600">{item.bloodGroup}</p>
-                  <p className="text-sm text-gray-600">{item.count} patients</p>
-                </div>
-              )
-            )}
+        <div className={cn(vc.card, vc.cardPad)}>
+          <h2 className={cn(vc.h2, 'mb-4')}>Blood group distribution</h2>
+          <div className="grid grid-cols-4 gap-4 md:grid-cols-8">
+            {demographics.bloodGroup.map((item: { bloodGroup: string; count: number }) => (
+              <div
+                key={item.bloodGroup}
+                className="rounded-2xl border border-teal-100 bg-teal-50/80 p-4 text-center ring-1 ring-teal-900/5"
+              >
+                <p className="text-2xl font-bold text-teal-800">{item.bloodGroup}</p>
+                <p className="text-sm text-slate-600">{item.count} patients</p>
+              </div>
+            ))}
           </div>
         </div>
       )}

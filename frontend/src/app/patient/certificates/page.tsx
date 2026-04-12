@@ -6,6 +6,8 @@ import { toast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
 import { Award, Download, Calendar } from 'lucide-react';
 import type { MedicalCertificate } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function CertificatesPage() {
   const { data: certificates, isLoading } = useQuery({
@@ -28,76 +30,74 @@ export default function CertificatesPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-12 text-gray-500">Loading...</div>;
+    return <div className={vc.loadingBox}>Loading...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Medical Certificates</h1>
+      <h1 className={vc.h1}>Medical certificates</h1>
 
       {certificates?.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <Award className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No certificates yet</h3>
-          <p className="text-gray-500">
-            Medical certificates issued by doctors will appear here
-          </p>
+        <div className={vc.emptyCard}>
+          <Award className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+          <h3 className="font-vicare-display text-lg font-semibold text-slate-900">No certificates yet</h3>
+          <p className="text-slate-500">Medical certificates issued by doctors will appear here</p>
         </div>
       ) : (
         <div className="space-y-4">
           {certificates?.map((cert: MedicalCertificate) => (
-            <div key={cert.id} className="bg-white rounded-lg shadow p-6">
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    <Award className="h-6 w-6 text-orange-600" />
-                    <h3 className="font-semibold text-lg">Medical Certificate</h3>
+            <div key={cert.id} className={cn(vc.card, vc.cardPad)}>
+              <div className="flex flex-col justify-between gap-4 lg:flex-row">
+                <div className="min-w-0 flex-1">
+                  <div className="mb-2 flex items-center gap-3">
+                    <div className={vc.iconTile}>
+                      <Award className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-vicare-display text-lg font-semibold text-slate-900">Medical certificate</h3>
                   </div>
 
-                  <div className="grid md:grid-cols-2 gap-4 mb-4">
+                  <div className="mb-4 grid gap-4 md:grid-cols-2">
                     <div>
-                      <p className="text-sm text-gray-600">Issued By</p>
-                      <p className="font-medium">
+                      <p className="text-sm text-slate-600">Issued by</p>
+                      <p className="font-medium text-slate-900">
                         Dr. {cert.doctor?.full_name}
                         {cert.doctor?.specialization && (
-                          <span className="text-gray-500 font-normal">
-                            {' '}
-                            • {cert.doctor.specialization}
-                          </span>
+                          <span className="font-normal text-slate-500"> • {cert.doctor.specialization}</span>
                         )}
                       </p>
                     </div>
                     <div>
-                      <p className="text-sm text-gray-600">Issued On</p>
-                      <p className="font-medium">{formatDate(cert.issued_at)}</p>
+                      <p className="text-sm text-slate-600">Issued on</p>
+                      <p className="font-medium text-slate-900">{formatDate(cert.issued_at)}</p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-4 p-4 bg-gray-50 rounded-lg mb-4">
-                    <Calendar className="h-5 w-5 text-blue-600" />
+                  <div className="mb-4 flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
+                    <Calendar className="h-5 w-5 shrink-0 text-teal-700" />
                     <div>
-                      <p className="text-sm text-gray-600">Leave Period</p>
-                      <p className="font-medium">
+                      <p className="text-sm text-slate-600">Leave period</p>
+                      <p className="font-medium text-slate-900">
                         {formatDate(cert.from_date)} — {formatDate(cert.to_date)}
                       </p>
                     </div>
                   </div>
 
                   <div>
-                    <p className="text-sm text-gray-600">Reason</p>
-                    <p className="font-medium">{cert.reason}</p>
+                    <p className="text-sm text-slate-600">Reason</p>
+                    <p className="font-medium text-slate-900">{cert.reason}</p>
                   </div>
 
                   {cert.notes && (
-                    <div className="mt-3 p-3 bg-yellow-50 rounded-lg">
-                      <p className="text-sm text-yellow-800">{cert.notes}</p>
+                    <div className={cn(vc.calloutWarn, 'mt-3')}>
+                      <p className="text-sm">{cert.notes}</p>
                     </div>
                   )}
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => handleDownload(cert.id)}
-                  className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition ml-4"
+                  className={cn(vc.btnPrimary, 'h-fit shrink-0 self-start lg:ml-4')}
                 >
                   <Download className="h-4 w-4" />
                   Download

@@ -6,6 +6,8 @@ import { toast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
 import { FileText, Download, Pill } from 'lucide-react';
 import type { Prescription, Medicine } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function PrescriptionsPage() {
   const { data: prescriptions, isLoading } = useQuery({
@@ -28,61 +30,61 @@ export default function PrescriptionsPage() {
   };
 
   if (isLoading) {
-    return <div className="text-center py-12 text-gray-500">Loading...</div>;
+    return <div className={vc.loadingBox}>Loading...</div>;
   }
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">My Prescriptions</h1>
+      <h1 className={vc.h1}>My prescriptions</h1>
 
       {prescriptions?.length === 0 ? (
-        <div className="bg-white rounded-lg shadow p-12 text-center">
-          <FileText className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-          <h3 className="text-lg font-medium text-gray-900 mb-2">No prescriptions yet</h3>
-          <p className="text-gray-500">Your prescriptions will appear here after consultations</p>
+        <div className={vc.emptyCard}>
+          <FileText className="mx-auto mb-4 h-12 w-12 text-slate-300" />
+          <h3 className="font-vicare-display text-lg font-semibold text-slate-900">No prescriptions yet</h3>
+          <p className="text-slate-500">Your prescriptions will appear here after consultations</p>
         </div>
       ) : (
         <div className="space-y-4">
           {prescriptions?.map((prescription: Prescription) => (
-            <div key={prescription.id} className="bg-white rounded-lg shadow overflow-hidden">
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-4">
+            <div key={prescription.id} className={cn(vc.card, 'overflow-hidden')}>
+              <div className={vc.cardPad}>
+                <div className="mb-4 flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
                   <div>
-                    <p className="font-semibold text-lg">
+                    <p className="text-lg font-semibold text-slate-900">
                       Prescription from Dr. {prescription.doctor?.full_name}
                     </p>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate-600">
                       {prescription.doctor?.specialization} • {formatDate(prescription.issued_at)}
                     </p>
                   </div>
                   <button
+                    type="button"
                     onClick={() => handleDownload(prescription.id)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+                    className={cn(vc.btnPrimary, 'shrink-0')}
                   >
                     <Download className="h-4 w-4" />
                     Download PDF
                   </button>
                 </div>
 
-                {/* Medicines */}
-                <div className="border rounded-lg overflow-hidden">
-                  <div className="bg-gray-50 px-4 py-2 border-b">
-                    <h4 className="font-medium flex items-center gap-2">
-                      <Pill className="h-4 w-4 text-purple-600" />
-                      Prescribed Medicines
+                <div className="overflow-hidden rounded-xl border border-slate-200">
+                  <div className="border-b border-slate-200 bg-slate-50 px-4 py-2">
+                    <h4 className="flex items-center gap-2 font-medium text-slate-900">
+                      <Pill className="h-4 w-4 text-teal-700" />
+                      Prescribed medicines
                     </h4>
                   </div>
-                  <div className="divide-y">
+                  <div className="divide-y divide-slate-100">
                     {prescription.medicines?.map((med: Medicine, idx: number) => (
                       <div key={idx} className="p-4">
                         <div className="flex justify-between items-start">
                           <div>
-                            <p className="font-medium">{med.name}</p>
-                            <p className="text-sm text-gray-600">
+                            <p className="font-medium text-slate-900">{med.name}</p>
+                            <p className="text-sm text-slate-600">
                               {med.dosage} • {med.frequency} • {med.duration}
                             </p>
                             {med.instructions && (
-                              <p className="text-sm text-gray-500 mt-1">{med.instructions}</p>
+                              <p className="mt-1 text-sm text-slate-500">{med.instructions}</p>
                             )}
                           </div>
                         </div>
@@ -91,11 +93,10 @@ export default function PrescriptionsPage() {
                   </div>
                 </div>
 
-                {/* Instructions */}
                 {prescription.instructions && (
-                  <div className="mt-4 p-4 bg-yellow-50 rounded-lg">
-                    <p className="text-sm font-medium text-yellow-800">Additional Instructions:</p>
-                    <p className="text-sm text-yellow-700 mt-1">{prescription.instructions}</p>
+                  <div className={cn(vc.calloutWarn, 'mt-4')}>
+                    <p className="text-sm font-medium">Additional instructions</p>
+                    <p className="mt-1 text-sm">{prescription.instructions}</p>
                   </div>
                 )}
               </div>

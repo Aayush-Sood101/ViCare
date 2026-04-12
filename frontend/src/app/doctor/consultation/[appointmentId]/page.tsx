@@ -15,6 +15,8 @@ import { Plus, Trash2, Save, FileText, Award } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { MEDICINE_FREQUENCIES } from '@/lib/constants';
 import type { Medicine, Consultation } from '@/types';
+import { vc } from '@/lib/vicare-ui';
+import { cn } from '@/lib/utils';
 
 export default function ConsultationPage() {
   const { appointmentId } = useParams();
@@ -140,43 +142,40 @@ export default function ConsultationPage() {
   };
 
   if (isLoading) {
-    return <div className="p-8 text-center">Loading...</div>;
+    return <div className={cn(vc.loadingBox, 'p-8')}>Loading...</div>;
   }
 
   const patient = appointment?.patient;
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      {/* Patient Info Header */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-start">
+    <div className="mx-auto max-w-6xl space-y-6">
+      <div className={cn(vc.card, vc.cardPad)}>
+        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-start">
           <div>
-            <h1 className="text-2xl font-bold">{patient?.full_name}</h1>
-            <p className="text-gray-600">Student ID: {patient?.student_id}</p>
-            <div className="mt-2 flex gap-4 text-sm text-gray-500">
+            <h1 className={vc.h1}>{patient?.full_name}</h1>
+            <p className="text-slate-600">Student ID: {patient?.student_id}</p>
+            <div className="mt-2 flex flex-wrap gap-4 text-sm text-slate-500">
               <span>DOB: {patient?.date_of_birth || 'N/A'}</span>
               <span>Gender: {patient?.gender || 'N/A'}</span>
               <span>Blood: {patient?.blood_group || 'N/A'}</span>
             </div>
           </div>
-          <div className="text-right">
-            <p className="text-sm text-gray-500">Token #{appointment?.token_number}</p>
-            <p className="text-sm text-gray-500">
+          <div className="text-left sm:text-right">
+            <p className="text-sm text-slate-500">Token #{appointment?.token_number}</p>
+            <p className="text-sm text-slate-500">
               {appointment ? formatDate(appointmentTime(appointment)) : ''}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        {/* Main Form */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Vitals */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <h2 className="font-semibold mb-4">Vitals</h2>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-6 lg:col-span-2">
+          <div className={cn(vc.card, vc.cardPad)}>
+            <h2 className={cn(vc.h2, 'mb-4')}>Vitals</h2>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
               <div>
-                <label className="text-sm text-gray-600">Blood Pressure</label>
+                <label className={vc.label}>Blood pressure</label>
                 <input
                   type="text"
                   placeholder="120/80"
@@ -187,11 +186,11 @@ export default function ConsultationPage() {
                       vitals: { ...formData.vitals, blood_pressure: e.target.value },
                     })
                   }
-                  className="w-full border rounded-lg p-2 mt-1"
+                  className={cn(vc.input, 'mt-1')}
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Temp (°F)</label>
+                <label className={vc.label}>Temp (°F)</label>
                 <input
                   type="text"
                   placeholder="98.6"
@@ -202,11 +201,11 @@ export default function ConsultationPage() {
                       vitals: { ...formData.vitals, temperature: e.target.value },
                     })
                   }
-                  className="w-full border rounded-lg p-2 mt-1"
+                  className={cn(vc.input, 'mt-1')}
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Pulse (bpm)</label>
+                <label className={vc.label}>Pulse (bpm)</label>
                 <input
                   type="text"
                   placeholder="72"
@@ -217,11 +216,11 @@ export default function ConsultationPage() {
                       vitals: { ...formData.vitals, pulse: e.target.value },
                     })
                   }
-                  className="w-full border rounded-lg p-2 mt-1"
+                  className={cn(vc.input, 'mt-1')}
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Weight (kg)</label>
+                <label className={vc.label}>Weight (kg)</label>
                 <input
                   type="text"
                   placeholder="70"
@@ -232,11 +231,11 @@ export default function ConsultationPage() {
                       vitals: { ...formData.vitals, weight: e.target.value },
                     })
                   }
-                  className="w-full border rounded-lg p-2 mt-1"
+                  className={cn(vc.input, 'mt-1')}
                 />
               </div>
               <div>
-                <label className="text-sm text-gray-600">Height (cm)</label>
+                <label className={vc.label}>Height (cm)</label>
                 <input
                   type="text"
                   placeholder="170"
@@ -247,92 +246,84 @@ export default function ConsultationPage() {
                       vitals: { ...formData.vitals, height: e.target.value },
                     })
                   }
-                  className="w-full border rounded-lg p-2 mt-1"
+                  className={cn(vc.input, 'mt-1')}
                 />
               </div>
             </div>
           </div>
 
           {/* Chief Complaint & Diagnosis */}
-          <div className="bg-white rounded-lg shadow p-6 space-y-4">
+          <div className={cn(vc.card, vc.cardPad, 'space-y-4')}>
             <div>
-              <label className="font-medium">Chief Complaint</label>
+              <label className={vc.label}>Chief complaint</label>
               <textarea
                 value={formData.chief_complaint}
                 onChange={(e) => setFormData({ ...formData, chief_complaint: e.target.value })}
-                className="w-full border rounded-lg p-3 mt-1 h-24"
+                className={cn(vc.textarea, 'mt-1 h-24')}
                 placeholder="Patient's primary complaints..."
               />
             </div>
             <div>
-              <label className="font-medium">Diagnosis</label>
+              <label className={vc.label}>Diagnosis</label>
               <textarea
                 value={formData.diagnosis}
                 onChange={(e) => setFormData({ ...formData, diagnosis: e.target.value })}
-                className="w-full border rounded-lg p-3 mt-1 h-24"
+                className={cn(vc.textarea, 'mt-1 h-24')}
                 placeholder="Your diagnosis..."
               />
             </div>
             <div>
-              <label className="font-medium">Treatment Plan</label>
+              <label className={vc.label}>Treatment plan</label>
               <textarea
                 value={formData.treatment_plan}
                 onChange={(e) => setFormData({ ...formData, treatment_plan: e.target.value })}
-                className="w-full border rounded-lg p-3 mt-1 h-20"
+                className={cn(vc.textarea, 'mt-1 h-20')}
                 placeholder="Treatment plan..."
               />
             </div>
             <div>
-              <label className="font-medium">Clinical Notes</label>
+              <label className={vc.label}>Clinical notes</label>
               <textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                className="w-full border rounded-lg p-3 mt-1 h-20"
+                className={cn(vc.textarea, 'mt-1 h-20')}
                 placeholder="Additional observations..."
               />
             </div>
             <div>
-              <label className="font-medium">Follow-up Date</label>
+              <label className={vc.label}>Follow-up date</label>
               <input
                 type="date"
                 value={formData.follow_up_date}
                 onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
-                className="w-full border rounded-lg p-2 mt-1"
+                className={cn(vc.input, 'mt-1')}
               />
             </div>
           </div>
 
           {/* Prescription */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold flex items-center gap-2">
-                <FileText className="h-5 w-5 text-purple-600" />
+          <div className={cn(vc.card, vc.cardPad)}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className={cn(vc.h2, 'flex items-center gap-2')}>
+                <FileText className="h-5 w-5 text-teal-700" />
                 Prescription
               </h2>
-              <button
-                type="button"
-                onClick={addMedicine}
-                className="flex items-center gap-2 text-blue-600 hover:text-blue-800"
-              >
-                <Plus className="w-4 h-4" />
-                Add Medicine
+              <button type="button" onClick={addMedicine} className={cn(vc.link, 'inline-flex items-center gap-2 text-sm')}>
+                <Plus className="h-4 w-4" />
+                Add medicine
               </button>
             </div>
 
             {medicines.length === 0 ? (
-              <p className="text-gray-500 text-center py-4">No medicines added</p>
+              <p className="py-4 text-center text-slate-500">No medicines added</p>
             ) : (
               <div className="space-y-4">
                 {medicines.map((med, index) => (
-                  <div key={index} className="border rounded-lg p-4">
-                    <div className="flex justify-between mb-3">
-                      <span className="font-medium">Medicine {index + 1}</span>
-                      <button
-                        type="button"
-                        onClick={() => removeMedicine(index)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        <Trash2 className="w-4 h-4" />
+                  <div key={index} className="rounded-xl border border-slate-200 p-4">
+                    <div className="mb-3 flex justify-between">
+                      <span className="font-medium text-slate-900">Medicine {index + 1}</span>
+                      <button type="button" onClick={() => removeMedicine(index)} className={vc.btnDangerSoft}>
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </div>
                     <div className="grid grid-cols-2 gap-3">
@@ -340,18 +331,18 @@ export default function ConsultationPage() {
                         placeholder="Medicine name"
                         value={med.name}
                         onChange={(e) => updateMedicine(index, 'name', e.target.value)}
-                        className="border rounded p-2"
+                        className={vc.input}
                       />
                       <input
                         placeholder="Dosage (e.g., 500mg)"
                         value={med.dosage}
                         onChange={(e) => updateMedicine(index, 'dosage', e.target.value)}
-                        className="border rounded p-2"
+                        className={vc.input}
                       />
                       <select
                         value={med.frequency}
                         onChange={(e) => updateMedicine(index, 'frequency', e.target.value)}
-                        className="border rounded p-2"
+                        className={vc.input}
                       >
                         <option value="">Select frequency</option>
                         {MEDICINE_FREQUENCIES.map((freq) => (
@@ -364,23 +355,23 @@ export default function ConsultationPage() {
                         placeholder="Duration (e.g., 5 days)"
                         value={med.duration}
                         onChange={(e) => updateMedicine(index, 'duration', e.target.value)}
-                        className="border rounded p-2"
+                        className={vc.input}
                       />
                       <input
                         placeholder="Instructions (e.g., After food)"
                         value={med.instructions || ''}
                         onChange={(e) => updateMedicine(index, 'instructions', e.target.value)}
-                        className="border rounded p-2 col-span-2"
+                        className={cn(vc.input, 'col-span-2')}
                       />
                     </div>
                   </div>
                 ))}
                 <div>
-                  <label className="text-sm text-gray-600">Additional Instructions</label>
+                  <label className={vc.label}>Additional instructions</label>
                   <textarea
                     value={prescriptionInstructions}
                     onChange={(e) => setPrescriptionInstructions(e.target.value)}
-                    className="w-full border rounded-lg p-2 mt-1 h-20"
+                    className={cn(vc.textarea, 'mt-1 h-20')}
                     placeholder="General instructions for the patient..."
                   />
                 </div>
@@ -388,26 +379,25 @@ export default function ConsultationPage() {
             )}
           </div>
 
-          {/* Medical Certificate */}
-          <div className="bg-white rounded-lg shadow p-6">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="font-semibold flex items-center gap-2">
-                <Award className="h-5 w-5 text-orange-600" />
-                Medical Certificate
+          <div className={cn(vc.card, vc.cardPad)}>
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className={cn(vc.h2, 'flex items-center gap-2')}>
+                <Award className="h-5 w-5 text-teal-700" />
+                Medical certificate
               </h2>
               <button
                 type="button"
                 onClick={() => setShowCertificateForm(!showCertificateForm)}
-                className="text-blue-600 hover:text-blue-800"
+                className={cn(vc.link, 'text-sm')}
               >
-                {showCertificateForm ? 'Remove' : 'Add Certificate'}
+                {showCertificateForm ? 'Remove' : 'Add certificate'}
               </button>
             </div>
 
             {showCertificateForm && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-sm font-medium">Reason for Certificate</label>
+                  <label className={vc.label}>Reason for certificate</label>
                   <input
                     type="text"
                     value={certificateData.reason}
@@ -415,81 +405,79 @@ export default function ConsultationPage() {
                       setCertificateData({ ...certificateData, reason: e.target.value })
                     }
                     placeholder="e.g., Medical leave"
-                    className="w-full border rounded-lg p-2 mt-1"
+                    className={cn(vc.input, 'mt-1')}
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="text-sm font-medium">From Date</label>
+                    <label className={vc.label}>From date</label>
                     <input
                       type="date"
                       value={certificateData.from_date}
                       onChange={(e) =>
                         setCertificateData({ ...certificateData, from_date: e.target.value })
                       }
-                      className="w-full border rounded-lg p-2 mt-1"
+                      className={cn(vc.input, 'mt-1')}
                     />
                   </div>
                   <div>
-                    <label className="text-sm font-medium">To Date</label>
+                    <label className={vc.label}>To date</label>
                     <input
                       type="date"
                       value={certificateData.to_date}
                       onChange={(e) =>
                         setCertificateData({ ...certificateData, to_date: e.target.value })
                       }
-                      className="w-full border rounded-lg p-2 mt-1"
+                      className={cn(vc.input, 'mt-1')}
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="text-sm font-medium">Notes</label>
+                  <label className={vc.label}>Notes</label>
                   <textarea
                     value={certificateData.notes}
                     onChange={(e) =>
                       setCertificateData({ ...certificateData, notes: e.target.value })
                     }
                     placeholder="Additional notes..."
-                    className="w-full border rounded-lg p-2 mt-1 h-20"
+                    className={cn(vc.textarea, 'mt-1 h-20')}
                   />
                 </div>
               </div>
             )}
           </div>
 
-          {/* Submit */}
           <button
+            type="button"
             onClick={() => createConsultation.mutate()}
             disabled={createConsultation.isPending}
-            className="w-full flex items-center justify-center gap-2 bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 disabled:opacity-50 font-semibold"
+            className={cn(vc.btnPrimary, vc.btnPrimaryBlock)}
           >
-            <Save className="w-5 h-5" />
-            {createConsultation.isPending ? 'Saving...' : 'Complete Consultation'}
+            <Save className="h-5 w-5" />
+            {createConsultation.isPending ? 'Saving...' : 'Complete consultation'}
           </button>
         </div>
 
-        {/* Patient History Sidebar */}
         <div className="space-y-4">
-          <div className="bg-white rounded-lg shadow p-4">
-            <h3 className="font-semibold mb-3">Patient History</h3>
+          <div className={cn(vc.card, 'p-4')}>
+            <h3 className={cn(vc.h2, 'mb-3')}>Patient history</h3>
             {!patientHistory || patientHistory.length === 0 ? (
-              <p className="text-sm text-gray-500">No previous visits</p>
+              <p className="text-sm text-slate-500">No previous visits</p>
             ) : (
-              <div className="space-y-3 max-h-96 overflow-y-auto">
+              <div className="max-h-96 space-y-3 overflow-y-auto">
                 {patientHistory.slice(0, 10).map((visit: Consultation) => (
-                  <div key={visit.id} className="border-b pb-3 last:border-0">
-                    <p className="text-xs text-gray-400">{formatDate(visit.created_at)}</p>
-                    <p className="font-medium text-sm">{visit.diagnosis || 'No diagnosis'}</p>
-                    <p className="text-xs text-gray-600">Dr. {visit.doctor?.full_name}</p>
+                  <div key={visit.id} className="border-b border-slate-100 pb-3 last:border-0">
+                    <p className="text-xs text-slate-400">{formatDate(visit.created_at)}</p>
+                    <p className="text-sm font-medium text-slate-900">{visit.diagnosis || 'No diagnosis'}</p>
+                    <p className="text-xs text-slate-600">Dr. {visit.doctor?.full_name}</p>
                     {visit.chief_complaint && (
-                      <p className="text-xs text-gray-500 mt-1">{visit.chief_complaint}</p>
+                      <p className="mt-1 text-xs text-slate-500">{visit.chief_complaint}</p>
                     )}
                   </div>
                 ))}
               </div>
             )}
           </div>
-
         </div>
       </div>
     </div>

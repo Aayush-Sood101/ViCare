@@ -6,6 +6,7 @@ import { useUser } from '@clerk/nextjs';
 import { useQuery } from '@tanstack/react-query';
 import PatientSidebar from '@/components/layouts/PatientSidebar';
 import { patientsApi } from '@/lib/api';
+import { vc } from '@/lib/vicare-ui';
 
 export default function PatientChrome({ children }: { children: React.ReactNode }) {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function PatientChrome({ children }: { children: React.ReactNode 
 
   if (!userLoaded) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 text-gray-600">
+      <div className={`flex h-screen items-center justify-center ${vc.pageCanvas} text-slate-600`}>
         Loading…
       </div>
     );
@@ -53,7 +54,7 @@ export default function PatientChrome({ children }: { children: React.ReactNode 
 
   if (skipPatientProfileGate) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 text-gray-600">
+      <div className={`flex h-screen items-center justify-center ${vc.pageCanvas} text-slate-600`}>
         Redirecting…
       </div>
     );
@@ -61,7 +62,7 @@ export default function PatientChrome({ children }: { children: React.ReactNode 
 
   if (isLoading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 text-gray-600">
+      <div className={`flex h-screen items-center justify-center ${vc.pageCanvas} text-slate-600`}>
         Loading your profile…
       </div>
     );
@@ -69,10 +70,10 @@ export default function PatientChrome({ children }: { children: React.ReactNode 
 
   if (isError) {
     return (
-      <div className="flex h-screen flex-col items-center justify-center bg-gray-50 p-6 text-center text-red-600">
+      <div className={`flex h-screen flex-col items-center justify-center ${vc.pageCanvas} p-6 text-center text-red-700`}>
         <p>Could not load your profile. Check that the API is running and you are signed in.</p>
         {(error as Error)?.message && (
-          <p className="mt-2 text-sm text-gray-600">{(error as Error).message}</p>
+          <p className="mt-2 text-sm text-slate-600">{(error as Error).message}</p>
         )}
       </div>
     );
@@ -80,16 +81,16 @@ export default function PatientChrome({ children }: { children: React.ReactNode 
 
   if (data === null) {
     return (
-      <div className="flex h-screen items-center justify-center bg-gray-50 text-gray-600">
+      <div className={`flex h-screen items-center justify-center ${vc.pageCanvas} text-slate-600`}>
         Redirecting to registration…
       </div>
     );
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className={vc.shell}>
       <PatientSidebar />
-      <main className="flex-1 overflow-auto p-8 lg:p-8 pt-20 lg:pt-8">{children}</main>
+      <main className={vc.main}>{children}</main>
     </div>
   );
 }
