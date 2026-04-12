@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { LandingWithLoader } from '@/components/ui/LandingWithLoader';
 import {
   Calendar,
   FileText,
@@ -15,6 +16,7 @@ import {
 
 export default function Home() {
   return (
+    <LandingWithLoader>
     <div className="min-h-screen bg-[#f8f9fa] text-[#191c1d] antialiased scroll-smooth">
       {/* Navigation */}
       <nav className="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-md border-b border-black/5">
@@ -24,7 +26,7 @@ export default function Home() {
           </div>
           <div className="hidden md:flex items-center gap-10">
             <a className="text-[#001e40] font-bold tracking-tight text-sm uppercase tracking-widest" href="#features">Features</a>
-            <a className="text-[#43474f] font-medium hover:text-[#001e40] transition-colors text-sm uppercase tracking-widest" href="#about">About</a>
+            <a className="text-[#43474f] font-medium hover:text-[#001e40] transition-colors text-sm uppercase tracking-widest" href="#whats-in-it">Why ViCare</a>
           </div>
           <div className="flex items-center gap-6">
             <Link className="text-[#43474f] font-semibold hover:text-[#001e40] transition-all text-sm" href="/sign-in">Sign In</Link>
@@ -58,7 +60,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl text-[#43474f] max-w-xl leading-relaxed opacity-90">
-                A premium digital gateway for the Sri Narayani Health Centre, merging clinical excellence with seamless technology for the VIT community.
+                A premium digital gateway for campus healthcare, merging clinical excellence with seamless technology for the entire VIT community.
               </p>
 
               <div className="flex flex-wrap gap-5 pt-4">
@@ -207,46 +209,63 @@ export default function Home() {
           </div>
         </section>
 
-        {/* About Section */}
-        <section id="about" className="py-40 bg-[#f8f9fa]">
+        {/* What's In It For You Section */}
+        <section id="whats-in-it" className="py-32 bg-[#f8f9fa]">
           <div className="max-w-[1440px] mx-auto px-8 md:px-12">
-            <div className="flex flex-col lg:flex-row items-center gap-24">
-              <div className="w-full lg:w-1/2 relative">
-                <div className="absolute -inset-4 bg-[#001e40]/5 rounded-[3rem] rotate-3"></div>
-                <img
-                  className="relative rounded-[3rem] w-full aspect-[4/3] object-cover shadow-2xl border-8 border-white"
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuBr8PF3fFAVb18d3759z5obkMbX965TP2TuB7dptfVWdBo0JHP0b_ulDPCbBeXKr4i-8lXtdcYVNhxY2roSOsjsko4ozUlNhnDikZAH_QTulXJ2LO1T0tcFnEQxoYhPZLnVw0vnbPjFCHNdlpUVrWIt73EZ6cJYFwkEX2sdpj4oRaa2t9bsuqjtdc-foe3CuSlOrix9pjKLL03tQm2K12Ry3fwdOrf8s198j4SKZ_kMK8MFERM1XSZyvssPur-lpgLOTnYD7JIJYlx7"
-                  alt="The elegant exterior of the Sri Narayani Health Centre building at dusk"
-                />
-                <div className="absolute -bottom-10 -right-10 w-64 h-64 bg-[#001e40]/5 rounded-full blur-3xl opacity-60"></div>
-              </div>
+            <div className="mb-16 text-center max-w-2xl mx-auto space-y-4">
+              <h2 className="text-4xl md:text-5xl font-extrabold text-[#001e40] tracking-tight">
+                What&apos;s In It <span className="text-[#0060ac]">For You?</span>
+              </h2>
+              <p className="text-[#43474f] text-lg leading-relaxed">
+                ViCare gives the VIT community a single, secure place to manage every aspect of campus healthcare — from booking to records to real-time status.
+              </p>
+              <div className="w-16 h-1 bg-[#0060ac] mx-auto rounded-full mt-6"></div>
+            </div>
 
-              <div className="w-full lg:w-1/2 space-y-10">
-                <div className="space-y-6">
-                  <span className="text-[#0060ac] font-extrabold tracking-[0.2em] uppercase text-xs">A Legacy of Care</span>
-                  <h2 className="text-5xl md:text-6xl font-extrabold text-[#001e40] leading-tight tracking-tighter">Sri Narayani Health Centre</h2>
-                  <p className="text-xl text-[#43474f] leading-relaxed font-light">
-                    ViCare serves as the digital pulse of our physical sanctuary. We&apos;ve synthesized clinical expertise with modern infrastructure to ensure every member of the VIT family receives unparalleled medical attention.
-                  </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {[
+                {
+                  title: 'Instant Appointments',
+                  desc: 'Book consultations with campus doctors in seconds — no queues, no paperwork.'
+                },
+                {
+                  title: 'Digital Prescriptions',
+                  desc: 'Access and download your prescriptions anytime, directly from your portal.'
+                },
+                {
+                  title: 'Real-time Queue',
+                  desc: 'Track your position in the consultation queue live, so you never waste time waiting.'
+                },
+                {
+                  title: 'Medical Certificates',
+                  desc: 'Request and receive official medical certificates through a fully digital flow.'
+                },
+                {
+                  title: 'Health Profile',
+                  desc: 'Maintain a complete digital record of allergies, medications, and medical history.'
+                },
+                {
+                  title: 'Doctor Tools',
+                  desc: 'Clinicians get a full patient management suite — queue, notes, and e-prescriptions.'
+                },
+                {
+                  title: 'Secure & Private',
+                  desc: 'Role-based access and encrypted data ensure your information stays confidential.'
+                },
+                {
+                  title: 'Always Accessible',
+                  desc: 'Available on any device, anytime — your health records follow you everywhere.'
+                },
+              ].map(({ title, desc }) => (
+                <div
+                  key={title}
+                  className="group bg-white rounded-3xl p-7 border border-slate-100 hover:border-[#001e40]/20 hover:shadow-lg hover:shadow-[#001e40]/5 transition-all duration-300"
+                >
+                  <div className="w-2 h-2 rounded-full bg-[#0060ac] mb-5 group-hover:scale-125 transition-transform" />
+                  <h3 className="font-extrabold text-[#001e40] text-lg mb-2 leading-snug">{title}</h3>
+                  <p className="text-[#43474f] text-sm leading-relaxed">{desc}</p>
                 </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 pt-4">
-                  <div className="space-y-3">
-                    <div className="w-10 h-10 rounded-full bg-[#001e40]/5 flex items-center justify-center text-[#001e40]">
-                      <Activity className="h-5 w-5" strokeWidth={2} />
-                    </div>
-                    <h4 className="font-bold text-[#001e40]">Integrated Facility</h4>
-                    <p className="text-[#43474f] text-sm leading-relaxed">Direct connection to on-campus medical experts and diagnostics.</p>
-                  </div>
-                  <div className="space-y-3">
-                    <div className="w-10 h-10 rounded-full bg-[#001e40]/5 flex items-center justify-center text-[#001e40]">
-                      <ShieldCheck className="h-5 w-5" />
-                    </div>
-                    <h4 className="font-bold text-[#001e40]">Advanced Lab</h4>
-                    <p className="text-[#43474f] text-sm leading-relaxed">World-class equipment powered by digital data precision.</p>
-                  </div>
-                </div>
-              </div>
+              ))}
             </div>
           </div>
         </section>
@@ -298,7 +317,7 @@ export default function Home() {
               <h4 className="font-extrabold text-[#001e40] uppercase tracking-[0.2em] text-xs mb-8">Platform</h4>
               <ul className="space-y-5">
                 <li><a className="text-[#43474f] hover:text-[#001e40] transition-colors font-medium text-sm" href="#features">Features</a></li>
-                <li><a className="text-[#43474f] hover:text-[#001e40] transition-colors font-medium text-sm" href="#about">Academic Sanctuary</a></li>
+                <li><a className="text-[#43474f] hover:text-[#001e40] transition-colors font-medium text-sm" href="#whats-in-it">Why ViCare</a></li>
                 <li><a className="text-[#43474f] hover:text-[#001e40] transition-colors font-medium text-sm" href="#">Privacy &amp; Ethics</a></li>
               </ul>
             </div>
@@ -314,7 +333,7 @@ export default function Home() {
           </div>
 
           <div className="pt-12 border-t border-black/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[#43474f] text-xs font-semibold uppercase tracking-widest opacity-60">
-            <div>© {new Date().getFullYear()} ViCare x VIT Academic Sanctuary</div>
+            <div>© {new Date().getFullYear()} ViCare — Campus Healthcare Platform</div>
             <div className="flex gap-10">
               <a className="hover:text-[#001e40] hover:opacity-100 transition-colors" href="#">Privacy</a>
               <a className="hover:text-[#001e40] hover:opacity-100 transition-colors" href="#">Terms</a>
@@ -323,5 +342,6 @@ export default function Home() {
         </div>
       </footer>
     </div>
+    </LandingWithLoader>
   );
 }

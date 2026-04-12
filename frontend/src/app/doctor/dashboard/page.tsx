@@ -59,10 +59,7 @@ export default function DoctorDashboard() {
             {formatDate(new Date())}
           </p>
         </div>
-        <div className="hidden lg:flex items-center gap-2 rounded-full bg-[#001e40]/5 border border-[#001e40]/10 px-4 py-2">
-          <Stethoscope className="h-4 w-4 text-[#0060ac]" />
-          <span className="text-xs font-bold text-[#001e40] uppercase tracking-widest">Sri Narayani Health Centre</span>
-        </div>
+
       </div>
 
       {/* Stat cards */}
