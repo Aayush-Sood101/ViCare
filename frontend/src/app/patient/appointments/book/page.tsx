@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { doctorsApi, appointmentsApi } from '@/lib/api';
+import { scheduledAtFromDateInput } from '@/lib/datetime';
 import { toast } from '@/hooks/use-toast';
 import { ArrowLeft, User, Calendar } from 'lucide-react';
 import Link from 'next/link';
@@ -24,8 +25,8 @@ export default function BookAppointmentPage() {
     mutationFn: () =>
       appointmentsApi.create({
         doctor_id: selectedDoctor!.id,
-        appointment_date: appointmentDate,
-        reason: reason || undefined,
+        scheduled_at: scheduledAtFromDateInput(appointmentDate),
+        reason_for_visit: reason.trim() || undefined,
       }),
     onSuccess: (response) => {
       toast({
@@ -33,7 +34,7 @@ export default function BookAppointmentPage() {
         description: `Your token number is #${response.data.token_number}`,
         variant: 'success',
       });
-      router.push('/appointments');
+      router.push('/patient/appointments');
     },
     onError: (error: Error & { response?: { data?: { error?: string } } }) => {
       toast({

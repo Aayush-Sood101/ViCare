@@ -1,5 +1,6 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import type { Appointment } from '@/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,6 +41,14 @@ export function getInitials(name: string) {
     .join('')
     .toUpperCase()
     .slice(0, 2);
+}
+
+export function appointmentTime(apt: Appointment): string {
+  return apt.scheduled_at;
+}
+
+export function appointmentReason(apt: Appointment): string | undefined {
+  return apt.reason_for_visit;
 }
 
 export function getStatusColor(status: string) {

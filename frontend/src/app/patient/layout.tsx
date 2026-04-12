@@ -1,14 +1,9 @@
-import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
-import PatientSidebar from '@/components/layouts/PatientSidebar';
+import PatientChrome from '@/components/layouts/PatientChrome';
+import { getAppRole } from '@/lib/clerk-session-role';
 
-export default async function PatientLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+export default async function PatientLayout({ children }: { children: React.ReactNode }) {
+  const role = await getAppRole();
 
   if (role === 'pending_doctor') {
     redirect('/doctor/pending');
@@ -26,12 +21,5 @@ export default async function PatientLayout({
     redirect('/admin/dashboard');
   }
 
-  return (
-    <div className="flex h-screen bg-gray-50">
-      <PatientSidebar />
-      <main className="flex-1 overflow-auto p-8 lg:p-8 pt-20 lg:pt-8">
-        {children}
-      </main>
-    </div>
-  );
+  return <PatientChrome>{children}</PatientChrome>;
 }

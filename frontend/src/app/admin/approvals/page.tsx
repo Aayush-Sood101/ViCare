@@ -106,7 +106,7 @@ export default function AdminApprovalsPage() {
                         </p>
                         <p>
                           <span className="text-gray-500">Phone:</span>{' '}
-                          {request.phone_number || 'N/A'}
+                          {(request.phone ?? request.phone_number) || 'N/A'}
                         </p>
                       </div>
                       <p className="text-xs text-gray-400 mt-2">

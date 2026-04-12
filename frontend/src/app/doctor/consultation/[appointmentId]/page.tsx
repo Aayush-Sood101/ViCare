@@ -10,7 +10,7 @@ import {
   certificatesApi,
   patientsApi,
 } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { formatDate, appointmentTime } from '@/lib/utils';
 import { Plus, Trash2, Save, FileText, Award } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { MEDICINE_FREQUENCIES } from '@/lib/constants';
@@ -61,12 +61,21 @@ export default function ConsultationPage() {
   // Create consultation mutation
   const createConsultation = useMutation({
     mutationFn: async () => {
-      // Create consultation
+      if (!appointment) {
+        throw new Error('Appointment not loaded');
+      }
+      const notesCombined = [formData.notes, formData.treatment_plan]
+        .filter(Boolean)
+        .join('\n\n--- Treatment plan ---\n');
+
       const { data: consultation } = await consultationsApi.create({
         appointment_id: appointmentId as string,
         patient_id: appointment.patient_id,
-        ...formData,
+        chief_complaint: formData.chief_complaint || undefined,
+        diagnosis: formData.diagnosis || undefined,
+        notes: notesCombined || undefined,
         vitals: formData.vitals,
+        follow_up_date: formData.follow_up_date || undefined,
       });
 
       // Create prescription if medicines added
@@ -149,15 +158,12 @@ export default function ConsultationPage() {
               <span>Gender: {patient?.gender || 'N/A'}</span>
               <span>Blood: {patient?.blood_group || 'N/A'}</span>
             </div>
-            {patient?.allergies && (
-              <div className="mt-2 p-2 bg-red-50 rounded text-sm text-red-700">
-                <strong>Allergies:</strong> {patient.allergies}
-              </div>
-            )}
           </div>
           <div className="text-right">
             <p className="text-sm text-gray-500">Token #{appointment?.token_number}</p>
-            <p className="text-sm text-gray-500">{formatDate(appointment?.appointment_date)}</p>
+            <p className="text-sm text-gray-500">
+              {appointment ? formatDate(appointmentTime(appointment)) : ''}
+            </p>
           </div>
         </div>
       </div>
@@ -484,19 +490,6 @@ export default function ConsultationPage() {
             )}
           </div>
 
-          {patient?.current_medications && (
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="font-semibold mb-2">Current Medications</h3>
-              <p className="text-sm text-gray-600">{patient.current_medications}</p>
-            </div>
-          )}
-
-          {patient?.medical_history && (
-            <div className="bg-white rounded-lg shadow p-4">
-              <h3 className="font-semibold mb-2">Medical History</h3>
-              <p className="text-sm text-gray-600">{patient.medical_history}</p>
-            </div>
-          )}
         </div>
       </div>
     </div>

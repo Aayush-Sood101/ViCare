@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUser } from '@clerk/nextjs';
 import { useRouter } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
@@ -10,54 +10,49 @@ import { BLOOD_GROUPS, GENDERS, SPECIALIZATIONS } from '@/lib/constants';
 import { Heart, Stethoscope } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
+const initialForm = {
+  full_name: '',
+  student_id: '',
+  date_of_birth: '',
+  gender: '',
+  blood_group: '',
+  phone_number: '',
+  address: '',
+  emergency_contact_name: '',
+  emergency_contact_phone: '',
+  emergency_contact_relation: '',
+  specialization: '',
+  qualification: '',
+  registration_number: '',
+};
+
 export default function CompleteSignupPage() {
-  const { user } = useUser();
+  const { user, isLoaded: userLoaded } = useUser();
   const { getToken } = useAuth();
   const router = useRouter();
   const [userType, setUserType] = useState<'patient' | 'doctor' | null>(null);
-  const [formData, setFormData] = useState({
-    full_name: user?.fullName || '',
-    student_id: '',
-    date_of_birth: '',
-    gender: '',
-    blood_group: '',
-    phone_number: '',
-    address: '',
-    emergency_contact_name: '',
-    emergency_contact_phone: '',
-    emergency_contact_relation: '',
-    specialization: '',
-    qualification: '',
-    registration_number: '',
-  });
+  const [formData, setFormData] = useState(initialForm);
 
   const completeSignup = useMutation({
     mutationFn: async () => {
       const token = await getToken();
       setAuthToken(token);
 
-      const data = userType === 'patient'
-        ? {
-            user_type: 'patient' as const,
-            full_name: formData.full_name,
-            student_id: formData.student_id,
-            date_of_birth: formData.date_of_birth || undefined,
-            gender: formData.gender || undefined,
-            blood_group: formData.blood_group || undefined,
-            phone_number: formData.phone_number || undefined,
-            address: formData.address || undefined,
-            emergency_contact_name: formData.emergency_contact_name || undefined,
-            emergency_contact_phone: formData.emergency_contact_phone || undefined,
-            emergency_contact_relation: formData.emergency_contact_relation || undefined,
-          }
-        : {
-            user_type: 'doctor' as const,
-            full_name: formData.full_name,
-            specialization: formData.specialization || undefined,
-            qualification: formData.qualification || undefined,
-            registration_number: formData.registration_number || undefined,
-            phone_number: formData.phone_number || undefined,
-          };
+      // Backend expects camelCase; display name comes from Clerk first/last name
+      const data =
+        userType === 'patient'
+          ? {
+              userType: 'patient' as const,
+              studentId: formData.student_id.trim(),
+              phone: formData.phone_number.trim() || undefined,
+            }
+          : {
+              userType: 'doctor' as const,
+              specialization: formData.specialization.trim(),
+              qualification: formData.qualification.trim(),
+              registrationNumber: formData.registration_number.trim(),
+              phone: formData.phone_number.trim() || undefined,
+            };
 
       return authApi.completeSignup(data);
     },
@@ -73,19 +68,52 @@ export default function CompleteSignupPage() {
       router.push(userType === 'patient' ? '/patient/dashboard' : '/doctor/pending');
       router.refresh();
     },
-    onError: (error: Error & { response?: { data?: { error?: string } } }) => {
+    onError: (error: Error & { response?: { data?: { error?: string; errors?: string[] } } }) => {
+      const msg =
+        error.response?.data?.error ||
+        error.response?.data?.errors?.join(', ') ||
+        'Something went wrong';
       toast({
         title: 'Error',
-        description: error.response?.data?.error || 'Something went wrong',
+        description: msg,
         variant: 'destructive',
       });
     },
   });
 
+  // Admins and doctors already have a role — do not force student/doctor registration here.
+  useEffect(() => {
+    if (!userLoaded || !user) return;
+    const role = user.publicMetadata?.role as string | undefined;
+    if (role === 'admin') router.replace('/admin/dashboard');
+    else if (role === 'doctor') router.replace('/doctor/dashboard');
+    else if (role === 'pending_doctor') router.replace('/doctor/pending');
+    else if (role === 'rejected_doctor') router.replace('/doctor/rejected');
+  }, [userLoaded, user, router]);
+
+  useEffect(() => {
+    if (user?.fullName) {
+      setFormData((prev) => ({ ...prev, full_name: user.fullName || '' }));
+    }
+  }, [user?.fullName]);
+
+  const existingRole = user?.publicMetadata?.role as string | undefined;
+  const alreadyRegistered =
+    userLoaded &&
+    ['admin', 'doctor', 'pending_doctor', 'rejected_doctor'].includes(existingRole ?? '');
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     completeSignup.mutate();
   };
+
+  if (!userLoaded || alreadyRegistered) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-50 text-gray-600">
+        {!userLoaded ? 'Loading…' : 'Redirecting…'}
+      </div>
+    );
+  }
 
   if (!userType) {
     return (
@@ -138,18 +166,14 @@ export default function CompleteSignupPage() {
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Common Fields */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Full Name *
-              </label>
-              <input
-                type="text"
-                required
-                value={formData.full_name}
-                onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full name</label>
+              <p className="rounded-lg border bg-gray-50 px-3 py-2 text-gray-900">
+                {user?.fullName || formData.full_name || '—'}
+              </p>
+              <p className="mt-1 text-xs text-gray-500">
+                Taken from your account. Change it in your profile settings if needed.
+              </p>
             </div>
 
             <div>

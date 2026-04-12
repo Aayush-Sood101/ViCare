@@ -243,7 +243,13 @@ export default function AdminAnalyticsPage() {
           <div className="h-64">
             {medicines && medicines.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={medicines} layout="vertical">
+                <BarChart
+                  data={medicines.map((m: { medicine: string; count: number }) => ({
+                    name: m.medicine,
+                    count: m.count,
+                  }))}
+                  layout="vertical"
+                >
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis type="number" />
                   <YAxis dataKey="name" type="category" width={120} tick={{ fontSize: 12 }} />
@@ -265,12 +271,14 @@ export default function AdminAnalyticsPage() {
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="font-semibold mb-4">Blood Group Distribution</h2>
           <div className="grid grid-cols-4 md:grid-cols-8 gap-4">
-            {demographics.bloodGroup.map((item: { blood_group: string; count: number }) => (
-              <div key={item.blood_group} className="text-center p-4 bg-red-50 rounded-lg">
-                <p className="text-2xl font-bold text-red-600">{item.blood_group}</p>
-                <p className="text-sm text-gray-600">{item.count} patients</p>
-              </div>
-            ))}
+            {demographics.bloodGroup.map(
+              (item: { bloodGroup: string; count: number }) => (
+                <div key={item.bloodGroup} className="text-center p-4 bg-red-50 rounded-lg">
+                  <p className="text-2xl font-bold text-red-600">{item.bloodGroup}</p>
+                  <p className="text-sm text-gray-600">{item.count} patients</p>
+                </div>
+              )
+            )}
           </div>
         </div>
       )}

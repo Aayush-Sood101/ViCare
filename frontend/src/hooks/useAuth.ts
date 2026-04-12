@@ -36,7 +36,11 @@ export function useAuth() {
           setAuthToken(token);
 
           const { data } = await authApi.getStatus();
-          setStatus(data);
+          setStatus({
+            role: data.role as UserRole,
+            profileComplete: Boolean(data.profileComplete),
+            rejectionReason: data.rejectionReason ?? undefined,
+          });
         } catch (error) {
           console.error('Auth init error:', error);
         }

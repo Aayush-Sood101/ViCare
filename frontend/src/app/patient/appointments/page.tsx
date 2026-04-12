@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentsApi } from '@/lib/api';
-import { formatDate, getStatusColor } from '@/lib/utils';
+import { formatDate, getStatusColor, appointmentTime, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
 import { Plus, X, Calendar } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -40,13 +40,13 @@ export default function AppointmentsPage() {
   const upcomingAppointments =
     appointments?.filter(
       (apt: Appointment) =>
-        new Date(apt.appointment_date) >= new Date() && apt.status !== 'cancelled'
+        new Date(appointmentTime(apt)) >= new Date() && apt.status !== 'cancelled'
     ) || [];
 
   const pastAppointments =
     appointments?.filter(
       (apt: Appointment) =>
-        new Date(apt.appointment_date) < new Date() || apt.status === 'cancelled'
+        new Date(appointmentTime(apt)) < new Date() || apt.status === 'cancelled'
     ) || [];
 
   return (
@@ -99,19 +99,19 @@ export default function AppointmentsPage() {
                         <p className="text-sm text-gray-600">
                           {apt.doctor?.specialization} • Token #{apt.token_number}
                         </p>
-                        {apt.reason && (
-                          <p className="text-sm text-gray-500 mt-1">{apt.reason}</p>
+                        {appointmentReason(apt) && (
+                          <p className="text-sm text-gray-500 mt-1">{appointmentReason(apt)}</p>
                         )}
                       </div>
                     </div>
                     <div className="flex items-center gap-4">
                       <div className="text-right">
-                        <p className="font-medium">{formatDate(apt.appointment_date)}</p>
+                        <p className="font-medium">{formatDate(appointmentTime(apt))}</p>
                         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
                           {apt.status}
                         </span>
                       </div>
-                      {apt.status === 'pending' && (
+                      {(apt.status === 'pending' || apt.status === 'confirmed') && (
                         <button
                           onClick={() => cancelAppointment.mutate(apt.id)}
                           disabled={cancelAppointment.isPending}
@@ -147,7 +147,7 @@ export default function AppointmentsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">{formatDate(apt.appointment_date)}</p>
+                      <p className="font-medium">{formatDate(appointmentTime(apt))}</p>
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>
                         {apt.status}
                       </span>
@@ -164,7 +164,7 @@ export default function AppointmentsPage() {
               <h3 className="text-lg font-medium text-gray-900 mb-2">No appointments found</h3>
               <p className="text-gray-500 mb-4">Book your first appointment to get started</p>
               <Link
-                href="/appointments/book"
+                href="/patient/appointments/book"
                 className="inline-flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
               >
                 <Plus className="h-4 w-4" />

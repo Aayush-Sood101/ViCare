@@ -47,7 +47,7 @@ export default function PatientSidebar() {
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="p-6 border-b">
-            <Link href="/dashboard" className="flex items-center gap-2">
+            <Link href="/patient/dashboard" className="flex items-center gap-2">
               <Heart className="h-8 w-8 text-blue-600" />
               <span className="text-xl font-bold text-gray-900">ViCare</span>
             </Link>

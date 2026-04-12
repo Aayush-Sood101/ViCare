@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useAuth } from '@/hooks/useAuth';
 import { patientsApi, appointmentsApi, consultationsApi } from '@/lib/api';
-import { formatDate } from '@/lib/utils';
+import { formatDate, appointmentTime, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
 import { Calendar, FileText, Stethoscope, Clock, Award } from 'lucide-react';
 import type { Appointment, Consultation } from '@/types';
@@ -29,7 +29,7 @@ export default function PatientDashboard() {
   const upcomingAppointments =
     appointments?.filter(
       (apt: Appointment) =>
-        new Date(apt.appointment_date) >= new Date() && apt.status !== 'cancelled'
+        new Date(appointmentTime(apt)) >= new Date() && apt.status !== 'cancelled'
     ) || [];
 
   const recentVisits = consultations?.slice(0, 5) || [];
@@ -103,7 +103,7 @@ export default function PatientDashboard() {
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-medium">{formatDate(apt.appointment_date)}</p>
+                  <p className="font-medium">{formatDate(appointmentTime(apt))}</p>
                   <p className="text-sm text-gray-600">Token: {apt.token_number}</p>
                 </div>
                 <span

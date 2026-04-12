@@ -2,6 +2,7 @@
 
 import { useQuery } from '@tanstack/react-query';
 import { prescriptionsApi } from '@/lib/api';
+import { toast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
 import { FileText, Download, Pill } from 'lucide-react';
 import type { Prescription, Medicine } from '@/types';
@@ -15,9 +16,14 @@ export default function PrescriptionsPage() {
   const handleDownload = async (id: string) => {
     try {
       const { data } = await prescriptionsApi.getPdfUrl(id);
-      window.open(data.url, '_blank');
+      const url = data.pdf_url as string;
+      if (url) window.open(url, '_blank');
     } catch {
-      console.error('Failed to get PDF URL');
+      toast({
+        title: 'PDF unavailable',
+        description: 'Could not open the prescription PDF.',
+        variant: 'destructive',
+      });
     }
   };
 

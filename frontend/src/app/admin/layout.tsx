@@ -1,14 +1,13 @@
-import { auth } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import AdminSidebar from '@/components/layouts/AdminSidebar';
+import { getAppRole } from '@/lib/clerk-session-role';
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = await getAppRole();
 
   if (role !== 'admin') {
     redirect('/patient/dashboard');

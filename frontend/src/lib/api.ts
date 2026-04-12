@@ -9,7 +9,27 @@ export const api = axios.create({
   },
 });
 
-// Add auth token to requests
+let clerkGetToken: (() => Promise<string | null>) | null = null;
+
+export function registerClerkTokenGetter(fn: (() => Promise<string | null>) | null) {
+  clerkGetToken = fn;
+}
+
+api.interceptors.request.use(async (config) => {
+  if (clerkGetToken) {
+    try {
+      const token = await clerkGetToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+    } catch {
+      /* ignore */
+    }
+  }
+  return config;
+});
+
+/** Legacy: optional manual token (interceptor usually supplies JWT). */
 export const setAuthToken = (token: string | null) => {
   if (token) {
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -18,23 +38,15 @@ export const setAuthToken = (token: string | null) => {
   }
 };
 
-// Auth
+// Auth — body matches Express backend (camelCase), not API_REFERENCE snake_case
 export const authApi = {
   completeSignup: (data: {
-    user_type: 'patient' | 'doctor';
-    full_name: string;
-    student_id?: string;
-    date_of_birth?: string;
-    gender?: string;
-    blood_group?: string;
-    phone_number?: string;
-    address?: string;
-    emergency_contact_name?: string;
-    emergency_contact_phone?: string;
-    emergency_contact_relation?: string;
+    userType: 'patient' | 'doctor';
+    studentId?: string;
     specialization?: string;
     qualification?: string;
-    registration_number?: string;
+    registrationNumber?: string;
+    phone?: string;
   }) => api.post('/api/auth/complete-signup', data),
 
   getStatus: () => api.get('/api/auth/status'),
@@ -44,11 +56,13 @@ export const authApi = {
 export const patientsApi = {
   getMe: () => api.get('/api/patients/me'),
   updateMe: (data: {
-    phone_number?: string;
+    phone?: string;
     address?: string;
-    medical_history?: string;
-    allergies?: string;
-    current_medications?: string;
+    date_of_birth?: string;
+    gender?: 'male' | 'female' | 'other';
+    blood_group?: string;
+    emergency_contact_name?: string;
+    emergency_contact_phone?: string;
   }) => api.put('/api/patients/me', data),
   getById: (id: string) => api.get(`/api/patients/${id}`),
   getHistory: (id: string) => api.get(`/api/patients/${id}/history`),
@@ -60,18 +74,18 @@ export const patientsApi = {
 export const doctorsApi = {
   list: (params?: { specialization?: string }) => api.get('/api/doctors', { params }),
   getMe: () => api.get('/api/doctors/me'),
-  updateMe: (data: { phone_number?: string; specialization?: string }) =>
+  updateMe: (data: { phone?: string; specialization?: string; qualification?: string }) =>
     api.put('/api/doctors/me', data),
   getById: (id: string) => api.get(`/api/doctors/${id}`),
   getStats: () => api.get('/api/doctors/me/stats'),
 };
 
-// Appointments
+// Appointments — backend uses scheduled_at + reason_for_visit
 export const appointmentsApi = {
   create: (data: {
     doctor_id: string;
-    appointment_date: string;
-    reason?: string;
+    scheduled_at: string;
+    reason_for_visit?: string;
   }) => api.post('/api/appointments', data),
 
   list: (params?: { status?: string; date?: string }) =>

@@ -3,7 +3,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { doctorsApi, appointmentsApi } from '@/lib/api';
 import { useAuth } from '@/hooks/useAuth';
-import { formatDate } from '@/lib/utils';
+import { formatDate, appointmentTime, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
 import { Users, Clock, CheckCircle, Play, Calendar } from 'lucide-react';
 import type { Appointment, DoctorStats } from '@/types';
@@ -113,8 +113,8 @@ export default function DoctorDashboard() {
               <p className="text-gray-600">
                 Token #{currentPatient.token_number} • {currentPatient.patient?.student_id}
               </p>
-              {currentPatient.reason && (
-                <p className="text-sm text-gray-500 mt-1">{currentPatient.reason}</p>
+              {appointmentReason(currentPatient) && (
+                <p className="text-sm text-gray-500 mt-1">{appointmentReason(currentPatient)}</p>
               )}
             </div>
             <Link

@@ -1,16 +1,28 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminApi } from '@/lib/api';
 import Link from 'next/link';
 import { Users, UserCheck, Stethoscope, Calendar, TrendingUp, Activity } from 'lucide-react';
-import type { AdminAnalytics } from '@/types';
-
 export default function AdminDashboard() {
   const { data: overview, isLoading } = useQuery({
     queryKey: ['admin-overview'],
     queryFn: () => adminApi.analytics.overview().then((res) => res.data),
   });
+
+  const weeklyChart = useMemo(() => {
+    const raw = overview?.weeklyAppointments;
+    if (!raw?.length) return [];
+    const counts: Record<string, number> = {};
+    for (const row of raw) {
+      const day = new Date(row.scheduled_at).toISOString().split('T')[0];
+      counts[day] = (counts[day] || 0) + 1;
+    }
+    return Object.entries(counts)
+      .map(([date, count]) => ({ date, count }))
+      .sort((a, b) => a.date.localeCompare(b.date));
+  }, [overview?.weeklyAppointments]);
 
   if (isLoading) {
     return <div className="text-center py-12 text-gray-500">Loading...</div>;
@@ -138,12 +150,12 @@ export default function AdminDashboard() {
       </div>
 
       {/* Weekly Trend */}
-      {overview?.weeklyAppointments && overview.weeklyAppointments.length > 0 && (
+      {weeklyChart.length > 0 && (
         <div className="bg-white rounded-lg shadow p-6">
           <h2 className="font-semibold mb-4">Weekly Appointment Trend</h2>
           <div className="flex items-end gap-2 h-40">
-            {overview.weeklyAppointments.map((day: { date: string; count: number }, index: number) => {
-              const maxCount = Math.max(...overview.weeklyAppointments.map((d: { count: number }) => d.count), 1);
+            {weeklyChart.map((day: { date: string; count: number }, index: number) => {
+              const maxCount = Math.max(...weeklyChart.map((d: { count: number }) => d.count), 1);
               const height = (day.count / maxCount) * 100;
               return (
                 <div

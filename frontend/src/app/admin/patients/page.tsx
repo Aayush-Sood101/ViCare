@@ -26,6 +26,7 @@ export default function AdminPatientsPage() {
 
   const patients = data?.data || data || [];
   const pagination = data?.pagination;
+  const totalPages = pagination?.pages ?? pagination?.totalPages ?? 1;
 
   return (
     <div className="space-y-6">
@@ -92,7 +93,7 @@ export default function AdminPatientsPage() {
                       <p className="font-mono text-sm">{patient.student_id}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm">{patient.phone_number || 'N/A'}</p>
+                      <p className="text-sm">{(patient.phone ?? patient.phone_number) || 'N/A'}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm">
@@ -116,7 +117,7 @@ export default function AdminPatientsPage() {
         )}
 
         {/* Pagination */}
-        {pagination && pagination.totalPages > 1 && (
+        {pagination && totalPages > 1 && (
           <div className="px-6 py-4 border-t flex items-center justify-between">
             <p className="text-sm text-gray-600">
               Showing {(page - 1) * limit + 1} to {Math.min(page * limit, pagination.total)} of{' '}
@@ -132,7 +133,7 @@ export default function AdminPatientsPage() {
               </button>
               <button
                 onClick={() => setPage(page + 1)}
-                disabled={page >= pagination.totalPages}
+                disabled={page >= totalPages}
                 className="p-2 border rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ChevronRight className="h-5 w-5" />

@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   Users,
   Stethoscope,
+  UserCircle,
   Menu,
   X,
 } from 'lucide-react';
@@ -16,6 +17,7 @@ import { cn } from '@/lib/utils';
 const navItems = [
   { href: '/doctor/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/doctor/queue', label: 'Patient Queue', icon: Users },
+  { href: '/doctor/profile', label: 'My Profile', icon: UserCircle },
 ];
 
 export default function DoctorSidebar() {

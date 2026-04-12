@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { appointmentsApi, doctorsApi } from '@/lib/api';
-import { formatDate, getStatusColor } from '@/lib/utils';
+import { formatDate, getStatusColor, appointmentReason } from '@/lib/utils';
 import Link from 'next/link';
 import { Play, Check, X, User, Clock } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
@@ -110,7 +110,9 @@ export default function DoctorQueue() {
                     <p className="text-sm text-gray-600">
                       Token #{apt.token_number} • {apt.patient?.student_id}
                     </p>
-                    {apt.reason && <p className="text-sm text-gray-500">{apt.reason}</p>}
+                    {appointmentReason(apt) && (
+                      <p className="text-sm text-gray-500">{appointmentReason(apt)}</p>
+                    )}
                   </div>
                 </div>
 

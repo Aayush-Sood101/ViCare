@@ -139,7 +139,7 @@ export default function AdminDoctorsPage() {
                       <p className="text-sm text-gray-500">{doctor.qualification}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <p className="text-sm">{doctor.phone_number || 'N/A'}</p>
+                      <p className="text-sm">{(doctor.phone ?? doctor.phone_number) || 'N/A'}</p>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {formatDate(doctor.created_at)}

@@ -9,6 +9,8 @@ export interface Patient {
   date_of_birth?: string;
   gender?: 'male' | 'female' | 'other';
   blood_group?: string;
+  /** Backend column */
+  phone?: string;
   phone_number?: string;
   address?: string;
   medical_history?: string;
@@ -29,6 +31,7 @@ export interface Doctor {
   specialization?: string;
   qualification?: string;
   registration_number?: string;
+  phone?: string;
   phone_number?: string;
   is_active: boolean;
   created_at: string;
@@ -43,6 +46,7 @@ export interface DoctorApprovalRequest {
   specialization?: string;
   qualification?: string;
   registration_number?: string;
+  phone?: string;
   phone_number?: string;
   status: 'pending' | 'approved' | 'rejected';
   rejection_reason?: string;
@@ -57,10 +61,10 @@ export interface Appointment {
   id: string;
   patient_id: string;
   doctor_id: string;
-  appointment_date: string;
+  scheduled_at: string;
   token_number?: number;
   status: AppointmentStatus;
-  reason?: string;
+  reason_for_visit?: string;
   created_at: string;
   updated_at: string;
   patient?: Patient;
@@ -150,7 +154,8 @@ export interface AdminAnalytics {
     appointments: number;
     consultations: number;
   };
-  weeklyAppointments?: Array<{ date: string; count: number }>;
+  /** Raw rows from backend (scheduled_at + status); aggregate in UI for charts */
+  weeklyAppointments?: Array<{ scheduled_at: string; status: string }>;
 }
 
 export interface PaginatedResponse<T> {
@@ -159,6 +164,8 @@ export interface PaginatedResponse<T> {
     total: number;
     page: number;
     limit: number;
-    totalPages: number;
+    /** Backend uses `pages`; keep both for compatibility */
+    totalPages?: number;
+    pages?: number;
   };
 }
