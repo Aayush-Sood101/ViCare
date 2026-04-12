@@ -134,7 +134,7 @@ export default function DoctorQueue() {
                           type="button"
                           onClick={() => updateStatus.mutate({ id: apt.id, status: 'in_progress' })}
                           disabled={updateStatus.isPending}
-                          className={vc.btnIconTeal}
+                          className={vc.btnIconNavy}
                           title="Start consultation"
                         >
                           <Play className="h-4 w-4" />
