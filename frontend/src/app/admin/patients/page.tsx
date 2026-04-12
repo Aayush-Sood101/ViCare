@@ -70,7 +70,7 @@ export default function AdminPatientsPage() {
                   <tr key={patient.id} className="hover:bg-slate-50/80">
                     <td className="whitespace-nowrap px-6 py-4">
                       <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#001e40]/10 text-[#004883]">
                           <User className="h-5 w-5" />
                         </div>
                         <div>

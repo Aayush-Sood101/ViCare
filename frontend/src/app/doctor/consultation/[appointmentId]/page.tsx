@@ -305,7 +305,7 @@ export default function ConsultationPage() {
           <div className={cn(vc.card, vc.cardPad)}>
             <div className="mb-4 flex items-center justify-between">
               <h2 className={cn(vc.h2, 'flex items-center gap-2')}>
-                <FileText className="h-5 w-5 text-teal-700" />
+                <FileText className="h-5 w-5 text-[#001e40]" />
                 Prescription
               </h2>
               <button type="button" onClick={addMedicine} className={cn(vc.link, 'inline-flex items-center gap-2 text-sm')}>
@@ -382,7 +382,7 @@ export default function ConsultationPage() {
           <div className={cn(vc.card, vc.cardPad)}>
             <div className="mb-4 flex items-center justify-between">
               <h2 className={cn(vc.h2, 'flex items-center gap-2')}>
-                <Award className="h-5 w-5 text-teal-700" />
+                <Award className="h-5 w-5 text-[#001e40]" />
                 Medical certificate
               </h2>
               <button

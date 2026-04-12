@@ -60,7 +60,7 @@ export default function BookAppointmentPage() {
       <div className="flex items-center gap-4">
         <Link
           href="/patient/appointments"
-          className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-teal-200 hover:bg-slate-50"
+          className="rounded-xl border border-slate-200 bg-white p-2 text-slate-700 shadow-sm transition hover:border-[#001e40]/20 hover:bg-slate-50"
         >
           <ArrowLeft className="h-5 w-5" />
         </Link>
@@ -82,12 +82,12 @@ export default function BookAppointmentPage() {
                   className={cn(
                     'rounded-2xl border-2 p-4 text-left transition',
                     selectedDoctor?.id === doctor.id
-                      ? 'border-teal-600 bg-teal-50/60 ring-2 ring-teal-600/20'
+                      ? 'border-[#0060ac] bg-[#001e40]/5 ring-2 ring-[#0060ac]/20'
                       : 'border-slate-200 bg-white hover:border-slate-300'
                   )}
                 >
                   <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#001e40]/10 text-[#004883]">
                       <User className="h-6 w-6" />
                     </div>
                     <div>

@@ -132,7 +132,7 @@ export default function CompleteSignupPage() {
               onClick={() => setUserType('patient')}
               className={cn(
                 vc.quickLink,
-                'text-left transition hover:border-teal-300'
+                'text-left transition hover:border-[#0060ac]/50'
               )}
             >
               <div className={cn(vc.iconTileLg, 'mb-4')}>
@@ -149,7 +149,7 @@ export default function CompleteSignupPage() {
               onClick={() => setUserType('doctor')}
               className={cn(
                 vc.quickLink,
-                'text-left transition hover:border-teal-300'
+                'text-left transition hover:border-[#0060ac]/50'
               )}
             >
               <div className={cn(vc.iconTileLg, 'mb-4')}>

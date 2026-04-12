@@ -24,15 +24,15 @@ export default function DoctorPendingPage() {
           <h3 className="mb-3 font-semibold text-slate-900">What happens next?</h3>
           <ul className="space-y-2 text-sm text-slate-600">
             <li className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#0060ac]" />
               <span>An administrator will review your credentials</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#0060ac]" />
               <span>You&apos;ll receive an email once approved</span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" />
+              <CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-[#0060ac]" />
               <span>Then you can access the doctor portal</span>
             </li>
           </ul>

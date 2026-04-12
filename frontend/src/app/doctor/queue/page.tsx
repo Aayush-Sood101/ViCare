@@ -73,8 +73,8 @@ export default function DoctorQueue() {
           <p className="text-2xl font-bold text-amber-900">{stats?.today?.pending || 0}</p>
         </div>
         <div className={cn(vc.statCard, vc.subtleHighlight)}>
-          <p className="text-sm text-teal-900">In progress</p>
-          <p className="text-2xl font-bold text-teal-950">{stats?.today?.in_progress || 0}</p>
+          <p className="text-sm text-[#001e40]">In progress</p>
+          <p className="text-2xl font-bold text-[#001e40]">{stats?.today?.in_progress || 0}</p>
         </div>
         <div className={cn(vc.statCard, 'bg-emerald-50/50 ring-1 ring-emerald-100')}>
           <p className="text-sm text-emerald-800">Completed</p>

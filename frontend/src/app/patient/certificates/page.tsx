@@ -73,7 +73,7 @@ export default function CertificatesPage() {
                   </div>
 
                   <div className="mb-4 flex items-center gap-4 rounded-xl border border-slate-200 bg-slate-50 p-4">
-                    <Calendar className="h-5 w-5 shrink-0 text-teal-700" />
+                    <Calendar className="h-5 w-5 shrink-0 text-[#001e40]" />
                     <div>
                       <p className="text-sm text-slate-600">Leave period</p>
                       <p className="font-medium text-slate-900">

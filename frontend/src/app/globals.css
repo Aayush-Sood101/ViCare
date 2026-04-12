@@ -1,17 +1,47 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8f9fa;
+  --foreground: #191c1d;
+
+  /* ViCare brand palette */
+  --vc-primary: #001e40;
+  --vc-secondary: #0060ac;
+  --vc-primary-container: #003366;
+  --vc-surface: #f8f9fa;
+  --vc-on-surface: #191c1d;
+  --vc-on-surface-variant: #43474f;
+  --vc-outline-variant: #c3c6d1;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
+  font-family: 'Inter', ui-sans-serif, system-ui, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Manrope', 'Inter', ui-sans-serif, system-ui, sans-serif;
 }
 
 .font-vicare-display {
   font-family: var(--font-vicare-display), ui-serif, Georgia, "Times New Roman", serif;
+}
+
+/* ViCare glass panel effect */
+.vicare-glass-panel {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ViCare premium text gradient */
+.vicare-text-premium {
+  background: linear-gradient(135deg, #001e40 0%, #004883 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* Animation utilities for toast */

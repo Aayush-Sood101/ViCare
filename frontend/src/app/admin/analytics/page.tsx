@@ -66,7 +66,7 @@ export default function AdminAnalyticsPage() {
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div className={vc.statCard}>
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-teal-700 text-white shadow-md shadow-teal-900/15 ring-2 ring-teal-600/25">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#001e40] text-white shadow-md shadow-[#001e40]/15 ring-2 ring-[#0060ac]/25">
               <Users className="h-6 w-6" />
             </div>
             <div>
@@ -113,7 +113,7 @@ export default function AdminAnalyticsPage() {
       {/* Visit Trends */}
       <div className={cn(vc.card, vc.cardPad)}>
         <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-          <TrendingUp className="h-5 w-5 text-teal-700" />
+          <TrendingUp className="h-5 w-5 text-[#001e40]" />
           Visit trends (last 30 days)
         </h2>
         <div className="h-80">
@@ -174,7 +174,7 @@ export default function AdminAnalyticsPage() {
         {/* Gender Distribution */}
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <Users className="h-5 w-5 text-teal-700" />
+            <Users className="h-5 w-5 text-[#001e40]" />
             Gender distribution
           </h2>
           <div className="h-64">
@@ -210,7 +210,7 @@ export default function AdminAnalyticsPage() {
         {/* Top Diagnoses */}
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <Activity className="h-5 w-5 text-teal-700" strokeWidth={2.25} />
+            <Activity className="h-5 w-5 text-[#001e40]" strokeWidth={2.25} />
             Top diagnoses
           </h2>
           <div className="h-64">
@@ -235,7 +235,7 @@ export default function AdminAnalyticsPage() {
         {/* Top Medicines */}
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <Pill className="h-5 w-5 text-teal-700" />
+            <Pill className="h-5 w-5 text-[#001e40]" />
             Most prescribed medicines
           </h2>
           <div className="h-64">
@@ -272,9 +272,9 @@ export default function AdminAnalyticsPage() {
             {demographics.bloodGroup.map((item: { bloodGroup: string; count: number }) => (
               <div
                 key={item.bloodGroup}
-                className="rounded-2xl border border-teal-100 bg-teal-50/80 p-4 text-center ring-1 ring-teal-900/5"
+                className="rounded-2xl border border-[#001e40]/10 bg-[#001e40]/5 p-4 text-center ring-1 ring-[#001e40]/5"
               >
-                <p className="text-2xl font-bold text-teal-800">{item.bloodGroup}</p>
+                <p className="text-2xl font-bold text-[#004883]">{item.bloodGroup}</p>
                 <p className="text-sm text-slate-600">{item.count} patients</p>
               </div>
             ))}

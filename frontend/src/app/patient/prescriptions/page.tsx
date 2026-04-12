@@ -70,7 +70,7 @@ export default function PrescriptionsPage() {
                 <div className="overflow-hidden rounded-xl border border-slate-200">
                   <div className="border-b border-slate-200 bg-slate-50 px-4 py-2">
                     <h4 className="flex items-center gap-2 font-medium text-slate-900">
-                      <Pill className="h-4 w-4 text-teal-700" />
+                      <Pill className="h-4 w-4 text-[#001e40]" />
                       Prescribed medicines
                     </h4>
                   </div>

@@ -84,7 +84,7 @@ export default function AdminApprovalsPage() {
               <div key={request.id} className="p-6">
                 <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
                   <div className="flex gap-4">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#001e40]/10 text-[#004883]">
                       <User className="h-6 w-6" />
                     </div>
                     <div>

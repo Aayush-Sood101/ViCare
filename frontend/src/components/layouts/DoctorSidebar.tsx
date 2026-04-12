@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { UserButton } from '@clerk/nextjs';
-import { LayoutDashboard, Users, Activity, UserCircle, Menu, X } from 'lucide-react';
+import { LayoutDashboard, Users, Activity, UserCircle, Menu, X, Stethoscope } from 'lucide-react';
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { vc, vcNavItem } from '@/lib/vicare-ui';
@@ -26,28 +26,32 @@ export default function DoctorSidebar() {
         onClick={() => setIsMobileOpen(!isMobileOpen)}
         aria-label={isMobileOpen ? 'Close menu' : 'Open menu'}
       >
-        {isMobileOpen ? <X className="h-6 w-6 text-slate-700" /> : <Menu className="h-6 w-6 text-slate-700" />}
+        {isMobileOpen ? <X className="h-6 w-6 text-[#001e40]" /> : <Menu className="h-6 w-6 text-[#001e40]" />}
       </button>
 
       <aside
-        className={cn(vc.sidebarAside, isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0')}
+        className={cn(
+          'fixed inset-y-0 left-0 z-40 w-64 transform border-r border-slate-100 bg-white shadow-xl transition-transform duration-300 ease-in-out lg:static lg:translate-x-0',
+          isMobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+        )}
       >
         <div className="flex h-full flex-col">
-          <div className={vc.sidebarBrand}>
-            <Link href="/doctor/dashboard" className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-700 text-white shadow-sm ring-1 ring-teal-800/20">
-                <Activity className="h-[18px] w-[18px]" strokeWidth={2.25} />
+          {/* Brand */}
+          <div className="border-b border-slate-100 px-6 py-5">
+            <Link href="/doctor/dashboard" className="flex items-center gap-3">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#001e40] text-white shadow-md shadow-[#001e40]/20">
+                <Stethoscope className="h-5 w-5" />
               </span>
               <div className="leading-tight">
-                <span className="block text-[15px] font-semibold tracking-tight text-slate-900">ViCare</span>
-                <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-slate-500">
-                  Doctor portal
-                </span>
+                <span className="block text-base font-extrabold tracking-tight text-[#001e40]">ViCare</span>
+                <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#0060ac]">Doctor Portal</span>
               </div>
             </Link>
           </div>
 
-          <nav className="flex-1 space-y-1 p-4">
+          {/* Nav */}
+          <nav className="flex-1 space-y-0.5 p-4">
+            <p className="mb-2 px-4 text-[10px] font-extrabold uppercase tracking-[0.18em] text-slate-400">Menu</p>
             {navItems.map((item) => {
               const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
               return (
@@ -55,19 +59,31 @@ export default function DoctorSidebar() {
                   key={item.href}
                   href={item.href}
                   onClick={() => setIsMobileOpen(false)}
-                  className={vcNavItem(isActive)}
+                  className={cn(
+                    'flex items-center gap-3 rounded-xl px-4 py-3 text-sm font-semibold transition-all duration-150',
+                    isActive
+                      ? 'bg-[#001e40] text-white shadow-md shadow-[#001e40]/20'
+                      : 'text-[#43474f] hover:bg-[#001e40]/5 hover:text-[#001e40]'
+                  )}
                 >
-                  <item.icon className="h-5 w-5 shrink-0" />
+                  <item.icon className="h-4.5 w-4.5 shrink-0" />
                   <span>{item.label}</span>
+                  {isActive && (
+                    <span className="ml-auto h-1.5 w-1.5 rounded-full bg-white/60" />
+                  )}
                 </Link>
               );
             })}
           </nav>
 
-          <div className={vc.sidebarFooter}>
-            <div className="flex items-center gap-3">
+          {/* Footer */}
+          <div className="border-t border-slate-100 p-4">
+            <div className="flex items-center gap-3 rounded-xl bg-slate-50 px-3 py-3">
               <UserButton />
-              <span className="text-sm text-slate-600">My account</span>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-[#191c1d] truncate">My account</p>
+                <p className="text-xs text-[#43474f]">Doctor</p>
+              </div>
             </div>
           </div>
         </div>

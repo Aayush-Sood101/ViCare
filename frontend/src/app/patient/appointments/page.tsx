@@ -87,7 +87,7 @@ export default function AppointmentsPage() {
                 {upcomingAppointments.map((apt: Appointment) => (
                   <div key={apt.id} className={cn(vc.listRow, 'flex-wrap')}>
                     <div className="flex items-center gap-4">
-                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#001e40]/10 text-[#004883]">
                         <Calendar className="h-6 w-6" />
                       </div>
                       <div>

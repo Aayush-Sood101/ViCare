@@ -103,7 +103,7 @@ export default function HealthProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <User className="h-5 w-5 text-teal-700" />
+            <User className="h-5 w-5 text-[#001e40]" />
             Basic information
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
@@ -180,7 +180,7 @@ export default function HealthProfilePage() {
 
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <Phone className="h-5 w-5 text-teal-700" />
+            <Phone className="h-5 w-5 text-[#001e40]" />
             Contact information
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
@@ -218,7 +218,7 @@ export default function HealthProfilePage() {
 
         <div className={cn(vc.card, vc.cardPad)}>
           <h2 className={cn(vc.h2, 'mb-4 flex items-center gap-2')}>
-            <Shield className="h-5 w-5 text-teal-700" />
+            <Shield className="h-5 w-5 text-[#001e40]" />
             Emergency contact
           </h2>
           <div className="grid gap-4 md:grid-cols-2">
@@ -258,7 +258,7 @@ export default function HealthProfilePage() {
         </div>
 
         <div className={vc.calloutInfo}>
-          <Activity className="mb-2 inline h-4 w-4 text-teal-800" strokeWidth={2.25} /> Clinical notes from
+          <Activity className="mb-2 inline h-4 w-4 text-[#004883]" strokeWidth={2.25} /> Clinical notes from
           consultations appear in your visit history. Profile fields above are what the clinic uses for scheduling
           and contact.
         </div>
